@@ -22,21 +22,20 @@ export const HomeBody = () => {
         slidesPerView: 3, // 3 slides visíveis em telas maiores
       },
     },
-    effect: 'cards',
   }
 
   // Array de slides para as imagens
   const slides = [
-    { src: "/hotel1.jpg", alt: "hotel" },
-    { src: "/hotel2.jpg", alt: "hotel" },
-    { src: "/restaurante1.jpg", alt: "restaurante" },
-    { src: "/hotel3.jpg", alt: "hotel" },
-    { src: "/restaurante2.jpg", alt: "restaurante" },
-    { src: "/restaurante3.jpg", alt: "restaurante" },
-    { src: "/restaurante4.jpg", alt: "restaurante" },
-    { src: "/hotel4.jpg", alt: "hotel" },
-    { src: "/hotel5.jpg", alt: "hotel" },
-    { src: "/hotel6.jpg", alt: "hotel" },
+    { src: "/hotel1.jpg", alt: "hotel", title: "Hotel de luxo 4 estrelas" },
+    { src: "/hotel2.jpg", alt: "hotel", title: "Hotel de luxo 5 estrelas" },
+    { src: "/restaurante1.jpg", alt: "restaurante", title: "Restaurante em ótima localização"},
+    { src: "/hotel3.jpg", alt: "hotel", title: "Hotel Muito bem avaliado"},
+    { src: "/restaurante2.jpg", alt: "restaurante", title: "Restaurante com vista para o mar"},
+    { src: "/restaurante3.jpg", alt: "restaurante", title: "Restaurante com ótimo preços"},
+    { src: "/restaurante4.jpg", alt: "restaurante", title: "Restaurante com ótimo custo beneficio" },
+    { src: "/hotel4.jpg", alt: "hotel" , title: "Hotel com ótima localização"},
+    { src: "/hotel5.jpg", alt: "hotel", title: "Hotel com ótima avaliação"},
+    { src: "/hotel6.jpg", alt: "hotel", title: "Hotel com café da manhã"},
   ];
 
   return (
@@ -75,14 +74,22 @@ export const HomeBody = () => {
         </div>
       </div>
 
-      <p className="text-decoration-line: underline text-xl mt-10">Mais procurados</p>
+      <p className="text-decoration-line: underline text-xl mt-10">Locais para se revisitar</p>
 
-      <div className="w-full h-96 mt-5 mb-30 bg-white">
-        <Slider settings={settings}>
+      <div className="w-full h-96 mt-5 mb-10 bg-white">
+      <Slider settings={settings}>
           {slides.slice(0, 5).map((slide, index) => (
             <SwiperSlide key={index} className="flex justify-center">
-              <div className="flex flex-col items-center h-80 justify-center">
-                <img src={slide.src} alt={slide.alt} className="w-full h-full object-cover rounded-lg" />
+              <div className="flex flex-col items-center h-96">
+                <img 
+                  src={slide.src} 
+                  alt={slide.alt} 
+                  className="w-full object-cover rounded-lg" 
+                  style={{ height: '80%' }}
+                />
+                <p 
+                className="mt-4 text-center text-lg font-serif">
+                  {slide.title}</p>
               </div>
             </SwiperSlide>
           ))}
@@ -92,13 +99,19 @@ export const HomeBody = () => {
       <div className="mt-10 flex flex-col items-baseline justify-between">
         <p className="text-decoration-line: underline text-xl">Mais procurados</p>
       </div>
-
-      <div className="w-full h-96 bg-white">
+      <div className="w-full h-96 mt-5 bg-white">
         <Slider settings={settings}>
           {slides.slice(5).map((slide, index) => (
-            <SwiperSlide key={index + 5} className="flex items-center justify-center">
-              <div className="flex flex-col items-center h-80 justify-center">
-                <img src={slide.src} alt={slide.alt} className="w-full h-full object-cover rounded-lg" />
+            <SwiperSlide key={index + 5} className="flex justify-center">
+              <div className="flex flex-col items-center h-96">
+                <img 
+                src={slide.src} 
+                alt={slide.alt} 
+                className="w-full object-cover rounded-lg" 
+                style={{ height: '80%' }} />
+                <p 
+                className="mt-4 text-center text-lg font-serif">
+                  {slide.title}</p>
               </div>
             </SwiperSlide>
           ))}

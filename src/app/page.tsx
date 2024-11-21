@@ -1,6 +1,6 @@
-import { Header } from './header'
-import { HomeBody } from './body-home'
-import { Footer } from './footer'
+import Header from '@/components/header'
+import { HomeBody } from '../components/body-home'
+import { Footer } from '../components/footer'
 
 export default function Home() {
   return (
