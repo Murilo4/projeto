@@ -19,7 +19,8 @@ const Header: HeaderType = ({short = true}) => {
   const openConta = () => setIsModalOpen2(true);
   const closeConta = () => setIsModalOpen2(false);
 
-  const [activeModal, setActiveModal] = useState(null); // Estado para rastrear a modal ativa
+  const [activeModal, setActiveModal] = useState(null);
+
   const openModal = (modal) => {
     setActiveModal(modal); // Define a modal ativa
   };
@@ -27,8 +28,6 @@ const Header: HeaderType = ({short = true}) => {
   const closeModal = () => {
     setActiveModal(null); // Fecha a modal
   };
-
-
 
   useEffect(() => {
     function handleResize() {
@@ -75,7 +74,7 @@ const Header: HeaderType = ({short = true}) => {
             onClick={Novidades}
           />
         
-          {activeModal === isModalOpen1 && (
+          {activeModal ===  isModalOpen1 && (
             <div className="absolute left-0 top-full mt-4 ml-20 bg-light-blue rounded-lg p-6 w-464px shadow-lg z-50">
               <h2 className="text-xl mb-4 text-slate-800 font-serif hover:text-black">Novidades</h2>
               <div className="flex flex-col space-y-3">
