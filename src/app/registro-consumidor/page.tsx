@@ -1,13 +1,14 @@
 import Header from '@/app/header'
-import { HomeBody } from './body-home'
-import { Footer } from './footer'
+import { Footer } from '@/app/footer'
+import CreateAccountPage from './registerForm'
+
 
 export default function Home() {
   return (
     <>
       <div className="bg-white min-h-screen">
         <Header />
-        <HomeBody/>
+        <CreateAccountPage />
         <Footer/>
       </div>
     </>

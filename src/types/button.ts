@@ -2,7 +2,7 @@ export type ButtonProps = {
     text: string
     link?: string
     type: 'button' | 'link'
-    style?: 'outDark' | 'light' | 'outLight'
+    style?: 'dark ' | 'outDark' | 'light' | 'outLight'
     radius?:
       | 'rounded-sm'
       | 'rounded'
@@ -11,6 +11,7 @@ export type ButtonProps = {
       | 'rounded-xl'
       | 'rounded-1xl'
       | 'rounded-2xl'
+      | 'rounded-3xl'
       | 'rounded-full'
     paddingx?:
       | 'px-1'
