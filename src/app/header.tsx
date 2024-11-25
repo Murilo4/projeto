@@ -175,7 +175,7 @@ const Header: React.FC<HeaderProps> = () => {
               <p className="text-sm font-medium mt-0">
                 <span className="font-bold text-xl">Empresa: Quero cadastrar minha empresa</span>
               </p>
-              <a href="/registro-consumidor"
+              <a href="/registro-empresa"
               target="_blank">
               <button className="mt-4 text-xl ml-4 text-black font-bold py-2 px-4 hover:bg-blue-thirth transition border-2 border-blue-thirth shadow-black shadow-mid rounded-3xl">
                 Cadastre sua empresa aqui
@@ -219,7 +219,7 @@ const Header: React.FC<HeaderProps> = () => {
               <div className="pl-4 mt-2 space-y-2">
                 <p>
                   <a
-                    href="https://www.instagram.com/comtur_franca/"
+                    href=""
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-slate-800 hover:underline"
@@ -229,7 +229,7 @@ const Header: React.FC<HeaderProps> = () => {
                 </p>
                 <p>
                   <a
-                    href="https://www.instagram.com"
+                    href=""
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-slate-800 hover:underline"
@@ -273,7 +273,7 @@ const Header: React.FC<HeaderProps> = () => {
               <div className="pl-4 mt-2 space-y-2">
                 <p>
                   <a
-                    href="/meu-perfil"
+                    href="/login"
                     target="_blank"
                     className="text-slate-800 hover:underline"
                   >
