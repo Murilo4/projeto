@@ -3,7 +3,7 @@ import React from "react";
 
 const CreateAccountPage: React.FC = () => {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen mt-10">
       {/* Metade Esquerda (Azul) */}
       <div className="w-1/2 bg-blue-thirth text-white flex flex-col justify-center p-8">
         <h2 className="text-2xl font-bold mb-4">Que bom que você deseja Fazer parte da Contur!</h2>
@@ -27,70 +27,70 @@ const CreateAccountPage: React.FC = () => {
           <input
             type="text"
             placeholder="Razão social"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Email para Contato */}
           <input
             type="email"
             placeholder="Email para contato"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Confirmar Email */}
           <input
             type="email"
             placeholder="Confirme o Email"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* CNPJ */}
           <input
             type="text"
             placeholder="CNPJ"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Endereço */}
           <input
             type="text"
             placeholder="Endereço"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Número */}
           <input
             type="text"
             placeholder="Número"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Estado */}
           <input
             type="text"
             placeholder="Estado"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Cidade */}
           <input
             type="text"
             placeholder="Cidade"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Senha */}
           <input
             type="password"
             placeholder="Senha"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Confirmar Senha */}
           <input
             type="password"
             placeholder="Confirme a senha"
-            className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border placeholder-black border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Botão de Cadastro */}

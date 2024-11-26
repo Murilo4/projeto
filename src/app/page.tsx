@@ -1,13 +1,16 @@
+
 import Header from '@/app/header'
-import { HomeBody } from './body-home'
 import { Footer } from './footer'
+import Search from './search'
+import Sliders from './sliders'
 
 export default function Home() {
   return (
     <>
       <div className="bg-white min-h-screen">
         <Header />
-        <HomeBody/>
+        <Search />
+        <Sliders />
         <Footer/>
       </div>
     </>

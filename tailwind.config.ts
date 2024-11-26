@@ -18,7 +18,8 @@ module.exports = {
         'green': '#41CD51',        // Cor verde
         'yellow': '#FFCC00',       // Cor amarela
         'blue': '#00B4DD',         // Cor azul clara
-        'red': '#FF4949',          // Cor vermelha
+        'red': '#FF4949',
+        'background': '#f5f5f5',          // Cor vermelha
       },
       spacing: {                   // Configurações de espaçamento
         'screen-header': 'calc(100vh - 62px)', // Altura da tela menos o cabeçalho

@@ -31,12 +31,12 @@ const Header: React.FC<HeaderProps> = () => {
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   return (
-    <header className="bg-white shadow-md fixed top-0 w-full z-50">
+    <header className="bg-background shadow-md fixed top-0 w-full z-50">
       <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
+        <a href="/" >
         <Image src="/contur.png" width={180} height={100} alt="logo" />
+        </a>
 
-        {/* Navegação Desktop */}
         <nav className="hidden lg:flex items-center flex-grow justify-center space-x-8">
           <div className="relative">
             <ButtonDefault
@@ -268,7 +268,6 @@ const Header: React.FC<HeaderProps> = () => {
             >
               Conta
             </button>
-            {/* Conteúdo de Minha Conta */}
             {activeSection === 'minha-conta' && (
               <div className="pl-4 mt-2 space-y-2">
                 <p>
@@ -281,13 +280,10 @@ const Header: React.FC<HeaderProps> = () => {
                   </a>
                 </p>
                 <p>
-                  <a
-                    href="/meu-perfil"
-                    target="_blank"
-                    className="text-slate-800 hover:underline"
-                  >
+                  <button
+                  onClick={() => openModal("registro")}>
                     Registro
-                  </a>
+                  </button>
                 </p>
               </div>
             )}

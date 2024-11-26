@@ -1,10 +1,9 @@
 'use client'
-import { ButtonDefault } from "@/components/ButtonDefault"
 import React from 'react';
 import Slider from "@/components/Slider";
 import { SwiperProps, SwiperSlide } from "swiper/react";
 
-export const HomeBody = () => {
+export const Sliders = () => {
   const settings: SwiperProps = {
     spaceBetween: 10,
     slidesPerView: 3,
@@ -40,40 +39,6 @@ export const HomeBody = () => {
 
   return (
     <section className="mx-auto mt-6 max-w-1440px px-2 bg-white min-h-screen">
-      <div className="relative w-full h-656px">
-        <img
-          src="/background.jpg"
-          alt="Imagem 1"
-          className="absolute top-0 left-0 w-full h-full object-cover rounded-3xl"
-        />
-        <div className="relative pb-10 flex flex-col items-center justify-end h-full">
-          <ButtonDefault
-            text="Saiba mais"
-            type="link"
-            style="light"
-            link="/saiba-mais"
-            radius="rounded-xl"
-            paddingx="px-6"
-            paddingy="py-4"
-            shadow
-          />
-        </div>
-      </div>
-
-      <div className="w-full mt-5 flex flex-col items-center">
-        <div className="relative w-full max-w-md lg:max-w-2xl xl:max-w-3xl h-12 mt-12 flex items-center">
-          <img
-            src="/lupa.png"
-            alt="Ícone de busca"
-            className="absolute left-6 top-1/2 transform -translate-y-1/2 w-6 h-6 lg:w-8 lg:h-8"
-          />
-          <input
-            type="text"
-            placeholder="Procure por locais aqui..."
-            className="pl-12 lg:pl-20 w-full h-12 lg:h-14 rounded-3xl border-opacity-70 lg:border-4 border-blue-thirth text-black placeholder-gray-500 shadow-very-clean shadow-blue-thirth focus:outline-none"
-          />
-        </div>
-      </div>
 
       <p className="text-decoration-line: underline text-xl mt-10">Locais para se descobrir</p>
 
@@ -121,3 +86,5 @@ export const HomeBody = () => {
     </section>
   );
 }
+
+export default Sliders

@@ -38,7 +38,49 @@ export const Footer = () => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-464px h-420px shadow-lg z-60">
         <h2 className="text-xl mb-4 text-black font-serif">Instagram</h2>
-        {/* Conteúdo da Modal */}
+        <div className="flex flex-col space-y-3">
+                <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
+                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
+                <span className="text-black font-serif text-xl">
+                <a
+                    href="https://www.instagram.com/comtur_franca/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-black hover:underline"
+                    >
+                    Comtur
+                    </a>
+                </span>
+                </button>
+                
+                <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
+                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
+                <span className="text-black font-serif text-xl">
+                <a
+                    href="https://www.instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-black hover:underline"
+                    >
+                    SysForms
+                    </a>
+                </span>
+                </button>
+                
+                <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
+                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
+                <span className="text-black font-serif text-xl">
+                <a
+                    href="https://www.instagram.com/polotifranca"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-black hover:underline"
+                    >
+                    Polo Francano De T.I
+                    </a>
+                </span>
+                </button>
+            </div>
         <div className="mt-4 text-right">
           <button onClick={closeModal1} className="px-4 text-black hover:text-black font-serif text-xl">
             Fechar
@@ -52,7 +94,49 @@ export const Footer = () => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96 shadow-lg z-60">
         <h2 className="text-xl mb-4 text-black font-serif">Facebook</h2>
-        {/* Conteúdo da Modal */}
+        <div className="flex flex-col space-y-3">
+            <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
+            <img src="/facebook.png" alt="Instagram" className="w-16 h-16 rounded-lg" />
+            <span className="text-black">
+            <a
+                href="https://www.facebook.com/comturfranca"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black hover:underline font-serif text-xl"
+                >
+                Comtur
+                </a>
+            </span>
+            </button>
+            
+            <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
+            <img src="/facebook.png" alt="Instagram" className="w-16 h-16 rounded-lg" />
+            <span className="text-black font-serif text-xl">
+            <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black hover:underline"
+                >
+                SysForms
+                </a>
+            </span>
+            </button>
+            
+            <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
+            <img src="/facebook.png" alt="Instagram" className="w-16 h-16 rounded-lg" />
+            <span className="text-black">
+            <a
+                href="https://www.facebook.com/PoloFrancanoTecnologia/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black hover:underline font-serif text-xl" 
+                >
+                Polo Francano De T.I
+                </a>
+            </span>
+            </button>
+        </div>
         <div className="mt-5 text-right">
           <button onClick={closeModal2} className="px-5 py-2 text-black hover:text-black font-serif text-xl">
             Fechar
