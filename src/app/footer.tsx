@@ -36,7 +36,7 @@ export const Footer = () => {
   {/* Modais */}
   {isModalOpen1 && (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-464px h-420px shadow-lg z-60">
+      <div className="bg-white rounded-lg p-6 w-464px h-420px shadow-lg z-60 overflow-y-auto">
         <h2 className="text-xl mb-4 text-black font-serif">Instagram</h2>
         <div className="flex flex-col space-y-3">
                 <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
@@ -80,32 +80,6 @@ export const Footer = () => {
                     </a>
                 </span>
                 </button>
-                <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
-                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
-                <span className="text-black font-serif text-xl">
-                <a
-                    href="https://www.instagram.com/polotifranca"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-black hover:underline"
-                    >
-                    Polo Francano De T.I
-                    </a>
-                </span>
-                </button>
-                <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
-                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
-                <span className="text-black font-serif text-xl">
-                <a
-                    href="https://www.instagram.com/polotifranca"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-black hover:underline"
-                    >
-                    Polo Francano De T.I
-                    </a>
-                </span>
-                </button>
             </div>
         <div className="mt-4 text-right">
           <button onClick={closeModal1} className="px-4 text-black hover:text-black font-serif text-xl">
@@ -118,7 +92,7 @@ export const Footer = () => {
 
   {isModalOpen2 && (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 shadow-lg z-60">
+      <div className="bg-white rounded-lg p-6 w-96 shadow-lg z-60 overflow-y-auto">
         <h2 className="text-xl mb-4 text-black font-serif">Facebook</h2>
         <div className="flex flex-col space-y-3">
             <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">

@@ -3,6 +3,8 @@ import Header from '@/app/header'
 import { Footer } from './footer'
 import Search from './search'
 import Sliders from './sliders'
+import Partners from './parcerias'
+import Sliders2 from './sliders2'
 
 export default function Home() {
   return (
@@ -11,6 +13,8 @@ export default function Home() {
         <Header />
         <Search />
         <Sliders />
+        <Partners />
+        <Sliders2 />
         <Footer/>
       </div>
     </>

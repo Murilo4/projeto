@@ -5,25 +5,26 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'principal-blue': '#2386B9', // Cor azul principal
-        'light-blue': '#70B4DC',     // Cor azul clara
-        'background-blue': '#DCE4E7', // Cor de fundo azul
-        'text': '#000000',          // Cor do texto
-        'icons-green': '#0F5800',  // Cor verde para ícones
-        'white-background': '#FFFFFF', // Cor de fundo branca
+        'principal-blue': '#2386B9',
+        'light-blue': '#70B4DC',
+        'background-blue': '#DCE4E7',
+        'text': '#000000',
+        'icons-green': '#0F5800',
+        'white-background': '#FFFFFF',
         'white-secundary': '#efefef',
         'blue-thirth': '#70B4DC',
         'green-button': '#2A881B',
         'green-border': '#97F131',
         'yellow-button': '#E8DA69',
         'yellow-border': '#B6A525',
-        'keyword': '#E3681B',      // Cor laranja
-        'purple': '#BB4FED',       // Cor roxa
-        'green': '#41CD51',        // Cor verde
-        'yellow': '#FFCC00',       // Cor amarela
-        'blue': '#00B4DD',         // Cor azul clara
+        'keyword': '#E3681B',
+        'purple': '#BB4FED', 
+        'green': '#41CD51', 
+        'yellow': '#FFCC00',
+        'blue': '#00B4DD',
         'red': '#FF4949',
-        'background': '#f5f5f5',          // Cor vermelha
+        'background': '#f5f5f5',
+        'blue-test': '#dff0fe',
       },
       spacing: {                   // Configurações de espaçamento
         'screen-header': 'calc(100vh - 62px)', // Altura da tela menos o cabeçalho
