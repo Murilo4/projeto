@@ -80,6 +80,32 @@ export const Footer = () => {
                     </a>
                 </span>
                 </button>
+                <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
+                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
+                <span className="text-black font-serif text-xl">
+                <a
+                    href="https://www.instagram.com/polotifranca"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-black hover:underline"
+                    >
+                    Polo Francano De T.I
+                    </a>
+                </span>
+                </button>
+                <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
+                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
+                <span className="text-black font-serif text-xl">
+                <a
+                    href="https://www.instagram.com/polotifranca"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-black hover:underline"
+                    >
+                    Polo Francano De T.I
+                    </a>
+                </span>
+                </button>
             </div>
         <div className="mt-4 text-right">
           <button onClick={closeModal1} className="px-4 text-black hover:text-black font-serif text-xl">
