@@ -53,7 +53,7 @@ const Search = () => {
             placeholder="Procure por locais aqui..."
             className="pl-12 lg:pl-20 w-full h-12 lg:h-14 rounded-3xl border-opacity-70 lg:border-4 border-blue-thirth text-black placeholder-gray-500 shadow-very-clean shadow-blue-thirth focus:outline-none"
           />
-          <button type="submit" className="bg-blue-500 text-black p-2 ml-2">Buscar</button>
+          <button type="submit" className="bg-blue-500 text-black p-2 ml-2"></button>
         </div>
         </form>
       </div>
