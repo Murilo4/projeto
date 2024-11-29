@@ -1,38 +1,37 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-
-interface Item {
-    id: number
-    title: string
-    description: string
-}
+// import React, { useEffect, useState } from 'react'
+// import { useSearchParams } from 'next/navigation'
+// interface Item {
+//     id: number
+//     title: string
+//     description: string
+// }
 
 const ResultsPage: React.FC = () => {
-    const searchParams = useSearchParams();
-    const searchTerm = searchParams.get('search'); // Obtém o termo de pesquisa da query string
-    const [data, setData] = useState<Item[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    // const searchParams = useSearchParams();
+    // const searchTerm = searchParams.get('search'); // Obtém o termo de pesquisa da query string
+    // const [data, setData] = useState<Item[]>([]);
+    // const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (searchTerm) {
-                setLoading(true);
-                try {
-                    const response = await fetch(`https://api.exemplo.com/dados?search=${searchTerm}`);
-                    const result: Item[] = await response.json();
-                    setData(result);
-                } catch (error) {
-                    console.error("Erro ao buscar dados:", error);
-                } finally {
-                    setLoading(false);
-                }
-            }
-        };
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         if (searchTerm) {
+    //             setLoading(true);
+    //             try {
+    //                 const response = await fetch(`https://api.exemplo.com/dados?search=${searchTerm}`);
+    //                 const result: Item[] = await response.json();
+    //                 setData(result);
+    //             } catch (error) {
+    //                 console.error("Erro ao buscar dados:", error);
+    //             } finally {
+    //                 setLoading(false);
+    //             }
+    //         }
+    //     };
 
-        fetchData();
-    }, [searchTerm]);
+    //     fetchData();
+    // }, [searchTerm]);
 
     return (
         <div className="min-h-screen bg-white-background mt-32">
@@ -126,7 +125,7 @@ const ResultsPage: React.FC = () => {
                                             <span className="ml-2 text-sm">4 Estrelas</span>
                                         </div>
                                         <p className="text-sm mb-2">
-                                            "Ótimo lugar para se ir com a família"
+                                            Ótimo lugar para se ir com a família
                                         </p>
                                         <p className="text-sm mb-2">Bebidas, Lanches, Almoço</p>
                                         <p className="text-sm text-green">Fecha às 01:00</p>

@@ -21,6 +21,10 @@ export const Sliders = () => {
         slidesPerView: 3, // 3 slides visíveis em telas maiores
       },
     },
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
   }
 
   // Array de slides para as imagens
@@ -38,23 +42,23 @@ export const Sliders = () => {
   ];
 
   return (
-    <section className="mx-auto mt-6 max-w-1440px px-2 bg-white min-h-screen">
+    <section className="mx-auto mt-6 max-w-1440px px-2 bg-background min-h-screen">
 
       <p className="text-decoration-line: underline text-xl mt-10">Locais para se descobrir</p>
 
-      <div className="w-full h-96 mt-5 mb-10 bg-white">
+      <div className="w-full h-96 mt-5 mb-10 bg-background">
       <Slider settings={settings}>
           {slides.slice(0, 5).map((slide, index) => (
             <SwiperSlide key={index} className="flex justify-center">
-              <div className="flex flex-col items-center h-96">
+              <div className="flex flex-col items-center h-96 ">
                 <img 
                   src={slide.src} 
                   alt={slide.alt} 
-                  className="w-full object-cover rounded-lg" 
-                  style={{ height: '80%' }}
+                  className="w-full object-cover rounded-lg shadow-md shadow-slate-700" 
+                  style={{ height: '85%' }}
                 />
                 <p 
-                className="mt-4 text-center text-lg font-serif">
+                className="mt-2 text-center text-lg font-serif">
                   {slide.title}</p>
               </div>
             </SwiperSlide>
@@ -65,7 +69,7 @@ export const Sliders = () => {
       <div className="mt-10 flex flex-col items-baseline justify-between">
         <p className="text-decoration-line: underline text-xl">Mais procurados</p>
       </div>
-      <div className="w-full h-96 mt-5 bg-white">
+      <div className="w-full h-96 mt-5 bg-background">
         <Slider settings={settings}>
           {slides.slice(5).map((slide, index) => (
             <SwiperSlide key={index + 5} className="flex justify-center">
@@ -73,10 +77,10 @@ export const Sliders = () => {
                 <img 
                 src={slide.src} 
                 alt={slide.alt} 
-                className="w-full object-cover rounded-lg" 
-                style={{ height: '80%' }} />
+                className="w-full object-cover rounded-lg  shadow-md shadow-slate-700" 
+                style={{ height: '85%' }} />
                 <p 
-                className="mt-4 text-center text-lg font-serif">
+                className="mt-2 text-center text-lg font-serif">
                   {slide.title}</p>
               </div>
             </SwiperSlide>

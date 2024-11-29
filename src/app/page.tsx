@@ -7,7 +7,7 @@ import Sliders from './sliders'
 export default function Home() {
   return (
     <>
-      <div className="bg-white min-h-screen">
+      <div className="bg-background min-h-screen">
         <Header />
         <Search />
         <Sliders />

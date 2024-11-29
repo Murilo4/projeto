@@ -13,6 +13,10 @@ module.exports = {
         'white-background': '#FFFFFF', // Cor de fundo branca
         'white-secundary': '#efefef',
         'blue-thirth': '#70B4DC',
+        'green-button': '#2A881B',
+        'green-border': '#97F131',
+        'yellow-button': '#E8DA69',
+        'yellow-border': '#B6A525',
         'keyword': '#E3681B',      // Cor laranja
         'purple': '#BB4FED',       // Cor roxa
         'green': '#41CD51',        // Cor verde

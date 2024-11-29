@@ -1,11 +1,11 @@
 'use client'
 
 import { ButtonDefault } from "@/components/ButtonDefault"
-import { HeaderProps } from "@/types/header";
-import Image from "next/image"
+import { HeaderProps } from "@/types/header"
 import { useState } from "react";
 import { ModalState} from "@/types/modal";
-import HamburgerButton from "@/components/hamburgerButton";  // Importe o botão de hambúrguer
+import HamburgerButton from "@/components/hamburgerButton"
+import Link from 'next/link'
 
 const Header: React.FC<HeaderProps> = () => {
 
@@ -33,9 +33,9 @@ const Header: React.FC<HeaderProps> = () => {
   return (
     <header className="bg-background shadow-md fixed top-0 w-full z-50">
       <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
-        <a href="/" >
-        <Image src="/contur.png" width={180} height={100} alt="logo" />
-        </a>
+      <Link href="/" passHref>
+          <img src="/contur.png" width={180} height={100} alt="logo" />
+        </Link>
 
         <nav className="hidden lg:flex items-center flex-grow justify-center space-x-8">
           <div className="relative">
