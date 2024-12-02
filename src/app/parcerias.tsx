@@ -43,8 +43,8 @@ export const Partners = () => {
       instagram: "https://www.instagram.com/famef.sp/", linkedin: "https://br.linkedin.com/school/famef/" }
     },
     { 
-      src: "/barragrande.png", 
-      alt: "barragrande", 
+      src: "/BarraGrande.png", 
+      alt: "BarraGrande", 
       title: "Cachaça Barra Grande",
       socials: { facebook: "https://www.facebook.com/cachacabarragde", 
       instagram: "https://www.instagram.com/cachacabarragrande/" }
