@@ -15,7 +15,7 @@ export const Partners = () => {
       768: { slidesPerView: 2 },
       1024: { slidesPerView: 3 },
     },
-    autoplay: { delay: 10000, disableOnInteraction: true },
+    autoplay: { delay: 3500, disableOnInteraction: true },
   };
 
   const slides = [
@@ -41,6 +41,94 @@ export const Partners = () => {
       title: "Famef SP",
       socials: { facebook: "https://www.facebook.com/famef.sp", 
       instagram: "https://www.instagram.com/famef.sp/", linkedin: "https://br.linkedin.com/school/famef/" }
+    },
+    { 
+      src: "/barragrande.png", 
+      alt: "barragrande", 
+      title: "Cachaça Barra Grande",
+      socials: { facebook: "https://www.facebook.com/cachacabarragde", 
+      instagram: "https://www.instagram.com/cachacabarragrande/" }
+    },
+    { 
+      src: "/nenaviagens.jpg", 
+      alt: "nenaviagens", 
+      title: "Nena Viagens",
+      socials: { facebook: "https://www.facebook.com/nena.viagens/?locale=pt_BR", 
+      instagram: "https://www.instagram.com/nenaviagens/", linkedin: "https://br.linkedin.com/company/nena-viagens" }
+    },
+    { 
+      src: "/infinitytransporte.jpg", 
+      alt: "infinity transporte", 
+      title: "Infinity Transporte Turismo",
+      socials: { facebook: "https://www.facebook.com/infinity.transporte.turismo", 
+      instagram: "https://www.instagram.com/infinity_transporte_turismo/"}
+    },
+    { 
+      src: "/olintocafe.png", 
+      alt: "infinity transporte", 
+      title: "Infinity Transporte Turismo",
+      socials: { facebook: "https://www.facebook.com/@olintocafefranca/", 
+      instagram: "https://www.instagram.com/olintocafe/", linkedin: "https://br.linkedin.com/company/olinto-cafe"}
+    },
+    { 
+      src: "/prefeituradefranca.jpg", 
+      alt: "Prefeitura de Franca", 
+      title: "Prefeitura de Franca",
+      socials: { facebook: "https://www.facebook.com/prefeituradefranca", 
+      instagram: "https://www.instagram.com/prefeituradefranca/", linkedin: "https://br.linkedin.com/company/prefeitura-municipal-de-franca",
+      x: "https://x.com/preffrancasp"}
+    },
+    { 
+      src: "/acif.png", 
+      alt: "Acif Franca", 
+      title: "Acif Franca",
+      socials: { facebook: "https://www.facebook.com/acifrancasp", 
+      instagram: "https://www.instagram.com/acifranca/", linkedin: "https://br.linkedin.com/in/acifranca"}
+    },
+    { 
+      src: "/sebrae.jpg", 
+      alt: "sebrae", 
+      title: "Sebrae",
+      socials: { facebook: "https://www.facebook.com/sebrae", 
+      instagram: "https://www.instagram.com/sebrae/", linkedin: "https://br.linkedin.com/company/sebrae",
+      x: "https://x.com/sebraesp"}
+    },
+    { 
+      src: "/senac.png", 
+      alt: "Senac", 
+      title: "Senac",
+      socials: { facebook: "https://www.facebook.com/@senacfranca", 
+      instagram: "https://www.instagram.com/senacfranca/", linkedin: "https://br.linkedin.com/school/senacsaopaulo/",
+      x: "https://x.com/SenacBrasil"}
+    },
+    { 
+      src: "/sesc.jpg", 
+      alt: "Sesc", 
+      title: "Sesc",
+      socials: { facebook: "https://www.facebook.com/SescBrasil", 
+      instagram: "https://www.instagram.com/sescfranca/", linkedin: "https://br.linkedin.com/company/sescbrasil",
+      x: "https://x.com/sescsp"}
+    },
+    { 
+      src: "/senai.jpg", 
+      alt: "Senai", 
+      title: "Senai",
+      socials: { facebook: "https://www.facebook.com/senaisp.franca", 
+      instagram: "https://www.instagram.com/senaifranca/", linkedin: "https://br.linkedin.com/company/senai-nacional",
+      x: "https://x.com/SENAInacional"}
+    },
+    { 
+      src: "/sacremate.png", 
+      alt: "Sacramalte", 
+      title: "Sacramalte",
+      socials: { facebook: "https://www.facebook.com/sacramalte", 
+      instagram: "https://www.instagram.com/sacramalte/", x: "https://x.com/SacraMalte"}
+    },
+    { 
+      src: "/hallel.jpg", 
+      alt: "Hallel Franca", 
+      title: "Hallel Franca",
+      socials: { facebook: "https://www.facebook.com/hallelfranca", instagram: "https://www.instagram.com/hallelfrancaoficial/"}
     },
   ];
 
@@ -129,6 +217,7 @@ export const Partners = () => {
                   </a>
                 </span>
               </button>
+              {slides[activeModal].socials.linkedin && (
               <button className="relative rounded-xl px-4 py-2 bg-blue-500 text-white flex items-center space-x-4">
                 <img 
                   src="/linkedin.png" 
@@ -146,6 +235,7 @@ export const Partners = () => {
                   </a>
                 </span>
               </button>
+              )}
               {slides[activeModal].socials.x && (
               <button className="relative rounded-xl px-4 py-3 bg-blue-500 text-white flex items-center space-x-4">
                 <img 

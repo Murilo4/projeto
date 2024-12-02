@@ -118,7 +118,6 @@ const Search = () => {
                 type="submit"
                 className="bg-blue-500 text-white px-6 py-2 rounded-3xl ml-4"
               >
-                Buscar
               </button>
             </div>
           </form>
