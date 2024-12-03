@@ -23,12 +23,12 @@ export const Footer = () => {
   <div className="w-full flex justify-end pr-64 space-x-4">
     <div className="max-w-310px">
       <button onClick={openModal1} className="rounded-xl py-4 bg-blue-500 text-white">
-        <img src="/instagram.png" alt="Abrir Modal" className="w-14 h-14 rounded-xl" />
+        <img src="/logos/instagram.png" alt="Abrir Modal" className="w-14 h-14 rounded-xl" />
       </button>
     </div>
     <div className="max-w-310px">
       <button onClick={openModal2} className="rounded-xl px-4 mt-1 bg-blue-500 text-white">
-        <img src="/facebook.png" alt="Abrir Modal" className="w-20 h-20" />
+        <img src="/logos/facebook.png" alt="Abrir Modal" className="w-20 h-20" />
       </button>
     </div>
   </div>
@@ -40,7 +40,7 @@ export const Footer = () => {
         <h2 className="text-xl mb-4 text-black font-serif">Instagram</h2>
         <div className="flex flex-col space-y-3">
                 <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
-                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
+                <img src="/logos/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
                 <span className="text-black font-serif text-xl">
                 <a
                     href="https://www.instagram.com/comtur_franca/"
@@ -54,7 +54,7 @@ export const Footer = () => {
                 </button>
                 
                 <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
-                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
+                <img src="/logos/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
                 <span className="text-black font-serif text-xl">
                 <a
                     href="https://www.instagram.com"
@@ -68,7 +68,7 @@ export const Footer = () => {
                 </button>
                 
                 <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
-                <img src="/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
+                <img src="/logos/instagram.png" alt="Instagram" className="w-14 h-14 rounded-lg" />
                 <span className="text-black font-serif text-xl">
                 <a
                     href="https://www.instagram.com/polotifranca"
@@ -96,7 +96,7 @@ export const Footer = () => {
         <h2 className="text-xl mb-4 text-black font-serif">Facebook</h2>
         <div className="flex flex-col space-y-3">
             <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
-            <img src="/facebook.png" alt="Instagram" className="w-16 h-16 rounded-lg" />
+            <img src="/logos/facebook.png" alt="Instagram" className="w-16 h-16 rounded-lg" />
             <span className="text-black">
             <a
                 href="https://www.facebook.com/comturfranca"
@@ -110,7 +110,7 @@ export const Footer = () => {
             </button>
             
             <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
-            <img src="/facebook.png" alt="Instagram" className="w-16 h-16 rounded-lg" />
+            <img src="/logos/facebook.png" alt="Instagram" className="w-16 h-16 rounded-lg" />
             <span className="text-black font-serif text-xl">
             <a
                 href="https://www.facebook.com"
@@ -124,7 +124,7 @@ export const Footer = () => {
             </button>
             
             <button className="relative rounded-xl px-6 py-4 bg-blue-500 text-white flex items-center space-x-4">
-            <img src="/facebook.png" alt="Instagram" className="w-16 h-16 rounded-lg" />
+            <img src="/logos/facebook.png" alt="Instagram" className="w-16 h-16 rounded-lg" />
             <span className="text-black">
             <a
                 href="https://www.facebook.com/PoloFrancanoTecnologia/"

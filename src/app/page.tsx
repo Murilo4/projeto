@@ -4,6 +4,7 @@ import { Footer } from './footer'
 import Search from './search'
 import Sliders from './sliders'
 import Partners from './parcerias'
+import Descover from './descover'
 import Sliders2 from './sliders2'
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
         <Search />
         <Sliders />
         <Partners />
+        <Descover />
         <Sliders2 />
         <Footer/>
       </div>

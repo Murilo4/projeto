@@ -29,11 +29,11 @@ export const Sliders = () => {
 
   // Array de slides para as imagens
   const slides = [
-    { src: "/hotel1.jpg", alt: "hotel", title: "Hotel de luxo 4 estrelas" },
-    { src: "/hotel2.jpg", alt: "hotel", title: "Hotel de luxo 5 estrelas" },
-    { src: "/restaurante1.jpg", alt: "restaurante", title: "Restaurante em ótima localização"},
-    { src: "/hotel3.jpg", alt: "hotel", title: "Hotel Muito bem avaliado"},
-    { src: "/restaurante2.jpg", alt: "restaurante", title: "Restaurante com vista para o mar"},
+    { src: "/sliders/hotel1.jpg", alt: "hotel", title: "Hotel de luxo 4 estrelas" },
+    { src: "/sliders/hotel2.jpg", alt: "hotel", title: "Hotel de luxo 5 estrelas" },
+    { src: "/sliders/restaurante1.jpg", alt: "restaurante", title: "Restaurante em ótima localização"},
+    { src: "/sliders/hotel3.jpg", alt: "hotel", title: "Hotel Muito bem avaliado"},
+    { src: "/sliders/restaurante2.jpg", alt: "restaurante", title: "Restaurante com vista para o mar"},
   ];
 
   return (

@@ -20,7 +20,7 @@ export const Partners = () => {
 
   const slides = [
     { 
-      src: "/fatec.jpeg", 
+      src: "/partness/fatec.jpeg", 
       alt: "Fatec Franca", 
       title: "Fatec Franca",
       socials: { facebook: "https://www.facebook.com/fatecfranca/", 
@@ -28,7 +28,7 @@ export const Partners = () => {
       x: "https://x.com/FatecFranca" },
     },
     { 
-      src: "/unifacef.jpg", 
+      src: "/partness/unifacef.jpg", 
       alt: "Uni-Facef", 
       title: "Uni-Facef",
       socials: { facebook: "https://www.facebook.com/unifacef/", 
@@ -36,42 +36,42 @@ export const Partners = () => {
       x: "https://x.com/UniFACEF" }
     },
     { 
-      src: "/famef.png", 
+      src: "/partness/famef.png", 
       alt: "famef", 
       title: "Famef SP",
       socials: { facebook: "https://www.facebook.com/famef.sp", 
       instagram: "https://www.instagram.com/famef.sp/", linkedin: "https://br.linkedin.com/school/famef/" }
     },
     { 
-      src: "/BarraGrande.png", 
+      src: "/partness/BarraGrande.png", 
       alt: "BarraGrande", 
       title: "Cachaça Barra Grande",
       socials: { facebook: "https://www.facebook.com/cachacabarragde", 
       instagram: "https://www.instagram.com/cachacabarragrande/" }
     },
     { 
-      src: "/nenaviagens.jpg", 
+      src: "/partness/nenaviagens.jpg", 
       alt: "nenaviagens", 
       title: "Nena Viagens",
       socials: { facebook: "https://www.facebook.com/nena.viagens/?locale=pt_BR", 
       instagram: "https://www.instagram.com/nenaviagens/", linkedin: "https://br.linkedin.com/company/nena-viagens" }
     },
     { 
-      src: "/infinitytransporte.jpg", 
+      src: "/partness/infinitytransporte.jpg", 
       alt: "infinity transporte", 
       title: "Infinity Transporte Turismo",
       socials: { facebook: "https://www.facebook.com/infinity.transporte.turismo", 
       instagram: "https://www.instagram.com/infinity_transporte_turismo/"}
     },
     { 
-      src: "/olintocafe.png", 
+      src: "/partness/olintocafe.png", 
       alt: "infinity transporte", 
       title: "Infinity Transporte Turismo",
       socials: { facebook: "https://www.facebook.com/@olintocafefranca/", 
       instagram: "https://www.instagram.com/olintocafe/", linkedin: "https://br.linkedin.com/company/olinto-cafe"}
     },
     { 
-      src: "/prefeituradefranca.jpg", 
+      src: "/partness/prefeituradefranca.jpg", 
       alt: "Prefeitura de Franca", 
       title: "Prefeitura de Franca",
       socials: { facebook: "https://www.facebook.com/prefeituradefranca", 
@@ -79,14 +79,14 @@ export const Partners = () => {
       x: "https://x.com/preffrancasp"}
     },
     { 
-      src: "/acif.png", 
+      src: "/partness/acif.png", 
       alt: "Acif Franca", 
       title: "Acif Franca",
       socials: { facebook: "https://www.facebook.com/acifrancasp", 
       instagram: "https://www.instagram.com/acifranca/", linkedin: "https://br.linkedin.com/in/acifranca"}
     },
     { 
-      src: "/sebrae.jpg", 
+      src: "/partness/sebrae.jpg", 
       alt: "sebrae", 
       title: "Sebrae",
       socials: { facebook: "https://www.facebook.com/sebrae", 
@@ -94,7 +94,7 @@ export const Partners = () => {
       x: "https://x.com/sebraesp"}
     },
     { 
-      src: "/senac.png", 
+      src: "/partness/senac.png", 
       alt: "Senac", 
       title: "Senac",
       socials: { facebook: "https://www.facebook.com/@senacfranca", 
@@ -102,7 +102,7 @@ export const Partners = () => {
       x: "https://x.com/SenacBrasil"}
     },
     { 
-      src: "/sesc.jpg", 
+      src: "/partness/sesc.jpg", 
       alt: "Sesc", 
       title: "Sesc",
       socials: { facebook: "https://www.facebook.com/SescBrasil", 
@@ -110,7 +110,7 @@ export const Partners = () => {
       x: "https://x.com/sescsp"}
     },
     { 
-      src: "/senai.jpg", 
+      src: "/partness/senai.jpg", 
       alt: "Senai", 
       title: "Senai",
       socials: { facebook: "https://www.facebook.com/senaisp.franca", 
@@ -118,14 +118,14 @@ export const Partners = () => {
       x: "https://x.com/SENAInacional"}
     },
     { 
-      src: "/sacremate.png", 
+      src: "/partness/sacremate.png", 
       alt: "Sacramalte", 
       title: "Sacramalte",
       socials: { facebook: "https://www.facebook.com/sacramalte", 
       instagram: "https://www.instagram.com/sacramalte/", x: "https://x.com/SacraMalte"}
     },
     { 
-      src: "/hallel.jpg", 
+      src: "/partness/hallel.jpg", 
       alt: "Hallel Franca", 
       title: "Hallel Franca",
       socials: { facebook: "https://www.facebook.com/hallelfranca", instagram: "https://www.instagram.com/hallelfrancaoficial/"}
@@ -185,7 +185,7 @@ export const Partners = () => {
             <div className="flex flex-col space-y-3">
             <button className="relative rounded-xl px-4 py-2 bg-blue-500 text-white flex items-center space-x-4">
                 <img 
-                  src="/instagram.png" 
+                  src="/logos/instagram.png" 
                   alt="Instagram" 
                   className="w-12 h-12 rounded-lg" 
                 />
@@ -202,7 +202,7 @@ export const Partners = () => {
               </button>
               <button className="relative rounded-xl px-2 py-2 bg-blue-500 text-white flex items-center space-x-4">
                 <img 
-                  src="/facebook.png" 
+                  src="/logos/facebook.png" 
                   alt="Facebook" 
                   className="w-16 h-16 rounded-lg" 
                 />
@@ -220,7 +220,7 @@ export const Partners = () => {
               {slides[activeModal].socials.linkedin && (
               <button className="relative rounded-xl px-4 py-2 bg-blue-500 text-white flex items-center space-x-4">
                 <img 
-                  src="/linkedin.png" 
+                  src="/logos/linkedin.png" 
                   alt="linkedin" 
                   className="w-12 h-12 rounded-lg" 
                 />
@@ -239,7 +239,7 @@ export const Partners = () => {
               {slides[activeModal].socials.x && (
               <button className="relative rounded-xl px-4 py-3 bg-blue-500 text-white flex items-center space-x-4">
                 <img 
-                  src="/x.jpg" 
+                  src="/logos/x.jpg" 
                   alt="x" 
                   className="w-12 h-12 rounded-lg" 
                 />

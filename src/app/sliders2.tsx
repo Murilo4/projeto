@@ -29,11 +29,11 @@ export const Sliders2 = () => {
 
   // Array de slides para as imagens
   const slides = [
-    { src: "/restaurante3.jpg", alt: "restaurante", title: "Restaurante com ótimo preços"},
-    { src: "/restaurante4.jpg", alt: "restaurante", title: "Restaurante com ótimo custo beneficio" },
-    { src: "/hotel4.jpg", alt: "hotel" , title: "Hotel com ótima localização"},
-    { src: "/hotel5.jpg", alt: "hotel", title: "Hotel com ótima avaliação"},
-    { src: "/hotel6.jpg", alt: "hotel", title: "Hotel com café da manhã"},
+    { src: "/sliders/restaurante3.jpg", alt: "restaurante", title: "Restaurante com ótimo preços"},
+    { src: "/sliders/restaurante4.jpg", alt: "restaurante", title: "Restaurante com ótimo custo beneficio" },
+    { src: "/sliders/hotel4.jpg", alt: "hotel" , title: "Hotel com ótima localização"},
+    { src: "/sliders/hotel5.jpg", alt: "hotel", title: "Hotel com ótima avaliação"},
+    { src: "/sliders/hotel6.jpg", alt: "hotel", title: "Hotel com café da manhã"},
   ];
 
   return (
