@@ -56,7 +56,7 @@ const ResultsPage: React.FC = () => {
           categorias: ["Bebidas", "Lanches", "Almoço"],
           horario: "Fecha às 01:00",
           imagem: "/logo1.png",
-          link: "/CioDaTerra",
+          link: "/main-page",
           map:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3736.370010117328!2d-47.405617822809546!3d-20.532036380996004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94b0a636e590b8e7%3A0x5675049e2c9bf771!2sR.%20Mal.%20Caxias%2C%202384%20-%20Centro%2C%20Franca%20-%20SP%2C%2014400-600!5e0!3m2!1spt-BR!2sbr!4v1733168085804!5m2!1spt-BR!2sbr"
         },
         {

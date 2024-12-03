@@ -150,7 +150,7 @@ export const Partners = () => {
     <section className="mx-auto max-w-full px-2 bg-blue-test">
       <div className="mx-auto max-w-1440px px-2 bg-blue-test">
         <p className="text-decoration-line: underline text-xl font-serif">Parceiros</p>
-        <div className="w-full h-80 mt-5 mb-10 bg-blue-test">
+        <div className="w-full h-80 mt-4 mb-10 bg-blue-test">
           <Slider settings={settings}>
             {slides.map((slide, index) => (
               <SwiperSlide key={index} className="flex justify-center">
