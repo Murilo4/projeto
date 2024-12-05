@@ -37,9 +37,9 @@ export const Sliders = () => {
   ];
 
   return (
-    <section className="mx-auto mt-6 max-w-1440px px-2 bg-background">
+    <section className="mx-auto max-w-1440px px-2 bg-background">
 
-      <p className="text-decoration-line: underline text-xl mt-10">Locais para se descobrir</p>
+      <p className="text-decoration-line: underline text-xl ">Locais para se descobrir</p>
 
       <div className="w-full h-96 mt-5 bg-background">
       <Slider settings={settings}>

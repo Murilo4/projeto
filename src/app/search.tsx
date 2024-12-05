@@ -1,5 +1,4 @@
 'use client'
-import { ButtonDefault } from "@/components/ButtonDefault"
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Slider from "@/components/Slider";
@@ -63,7 +62,7 @@ const Search = () => {
   
 
   return (
-    <section className="mx-auto mt-18 max-w-1440px px-40 bg-background min-h-screen">
+    <section className="mx-auto mt-18 mb-20 max-w-1440px px-40 bg-background">
       <div className="relative w-full h-656px">
         <Slider settings={settings}>
           {slides.slice(0, 22).map((slide, index) => (
@@ -79,18 +78,6 @@ const Search = () => {
             </SwiperSlide>
           ))}
           </Slider>
-          <div className="relative pb-10 mt-4 flex flex-col items-center justify-end h-full">
-            <ButtonDefault
-              text="Saiba mais"
-              type="link"
-              style="light"
-              link="/saiba-mais"
-              radius="rounded-xl"
-              paddingx="px-6"
-              paddingy="py-4"
-              shadow
-            />
-          </div>
         </div>
   
         {/* Search Form */}

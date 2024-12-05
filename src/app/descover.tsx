@@ -64,7 +64,7 @@ export const Descover = () => {
                                 <ButtonDefault
                                     text={`Conheça mais sobre ${item.local}`}
                                     type="link"
-                                    link={`/cityes/?search=${item.local}`}
+                                    link={`/cities/?search=${item.local}`}
                                 ></ButtonDefault>
                             </div>
                         </div>
