@@ -14,9 +14,9 @@ const data = [
         local: 'Franca'
     },
     {
-        image: ['/cidade2a.jpg', '/cidade2b.jpg', '/cidade2c.jpg'],
-        title: 'Mais Benefícios',
-        text: 'Another example of dummy text for the next slide...',
+        image: ['/mainPhotos/rifaina1.png', '/mainPhotos/rifaina2.png', '/mainPhotos/rifaina3.png'],
+        title: 'Rifaina',
+        text: 'Rifaina é uma pequena cidade localizada no interior de São Paulo, conhecida por suas belezas naturais e tranquilidade. Situada a cerca de 50 km de Franca, a cidade é famosa pela sua proximidade com o Rio Grande, que oferece opções de lazer ao ar livre, como pesca, passeios de barco e banhos nas águas do rio.A cidade é também um destino turístico popular para quem busca um ambiente mais sossegado, ideal para descanso e para a prática de esportes náuticos. Rifaina tem uma atmosfera pacata, com uma população acolhedora e várias opções de restaurantes típicos e pousadas que atraem os turistas.',
         local: 'Rifaina'
     },
 ];
@@ -37,6 +37,7 @@ export const Descover = () => {
             delay: 2500,
             disableOnInteraction: false
         },
+        
     }
 
     return (

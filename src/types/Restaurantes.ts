@@ -6,7 +6,6 @@ export interface Restaurante {
   horario: string;
   imagens: string[];
   link: string;
-  map: string;
 }
 
 export interface Historia {
@@ -18,11 +17,37 @@ export interface Atracao {
   nome: string;
   descricao: string;
   imagens: string[];
+  link: string;
+}
+export interface Hoteis {
+  nome: string;
+  estrelas: number;
+  descricao: string;
+  categorias: string[];
+  horario: string;
+  imagens: string[];
+  link: string;
+}
+
+export interface Cultura {
+  nome: string;
+  descricao: string;
+  imagens: string[];
+  link: string;
+}
+
+export interface Teatro {
+  nome: string;
+  descricao: string;
+  imagens: string[];
+  link: string;
 }
 
 export interface CidadeData {
   Restaurantes: Restaurante[];
-  Hoteis: Restaurante[];
+  Hoteis: Hoteis[];
   Historia: Historia[];
-  Atracoes: Atracao[];
+  Atrações: Atracao[];
+  Cultura: Cultura[];
+  Teatro: Teatro[];
 }
