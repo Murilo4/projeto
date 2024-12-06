@@ -217,7 +217,7 @@ const ResultsCitys = () => {
                       <span className="ml-2 text-base">{item.estrelas} Estrelas</span>
                     </div>
                     <p className="text-sm text-gray-600">{item.descricao}</p>
-                    <p className="text-sm text-gray-600">Horário: {item.horario}</p>
+                    <p className="text-sm text-green-button">Horário: {item.horario}</p>
                   </div>
                   <div className="flex justify-between items-center mx-4 my-3">
                     <button

@@ -115,42 +115,62 @@ const data: {
     Rifaina: {
       Restaurantes: [
         {
-          nome: 'Restaurante Lagoa Azul',
-          estrelas: 5,
+          nome: 'Bar e Petiscaria Deck 034',
+          estrelas: 3,
           descricao: 'Ótima vista do lago com pratos à base de peixe',
           categorias: ['Peixes', 'Almoço'],
-          horario: 'Fecha às 21:00',
-          imagens: ['/restaurante_lagoa.png', '/restaurante_lagoa2.png'],
-          link: '/restaurante-lagoa',
+          horario: 'Fecha às 23:30',
+          imagens: ['/cidades/barDeck1.png', '/cidades/barDeck2.png'],
+          link: '/DeckBar',
+        },
+        {
+          nome: 'Quiosque do Marelo',
+          estrelas: 4,
+          descricao: 'Ótima vista do lago com pratos à base de peixe',
+          categorias: ['Peixes', 'Almoço'],
+          horario: 'Fecha às 23:30',
+          imagens: ['/cidades/quiosquedomarelo1.png', '/cidades/quiosquedomarelo2.png'],
+          link: '/DeckBar',
         },
       ],
       Hoteis: [
         {
-          nome: 'Hotel Refúgio das Águas',
+          nome: 'Pousada Mala e Cuia',
           estrelas: 5,
           descricao: 'Hotel aconchegante com vista para o lago',
           categorias: ['Acomodações', 'Relaxamento'],
           horario: 'Recepção 24h',
-          imagens: ['/hotel_refugio.png'],
-          link: '/hotel-refugio',
+          imagens: ['/cidades/PousadaMalaeCuia.png', '/cidades/pousada-mala2.png'],
+          link: '/pousada-Mala',
         },
       ],
       Historia: [
         {
-          info: 'Rifaina, localizada no interior de São Paulo, tem uma história encantadora...',
-          imagens: ['/historia_rifaina.png'],
+          info: 'Rifaina é uma pequena e charmosa cidade localizada no estado de São Paulo, próxima à divisa com Minas Gerais. Sua história remonta ao século XIX, quando a região começou a ser explorada por colonizadores em busca de terras férteis para a agricultura e pecuária. Originalmente, o local fazia parte de Franca, mas o desenvolvimento gradual levou à sua emancipação. O município foi fundado oficialmente em 1944, mas sua história começou antes, com o povoado chamado "São Sebastião da Rifaina". O nome "Rifaina" acredita-se estar relacionado a uma planta típica da região ou a um termo de origem indígena. Ao longo dos anos, a cidade foi se transformando, mantendo o ar pacato, mesmo com o crescimento. A construção da represa de Jaguara, nos anos 1970, teve um impacto significativo em Rifaina. O rio Grande, que passa pela cidade, foi represado, formando um grande lago que hoje é um dos principais atrativos turísticos. A paisagem encantadora, com águas cristalinas, praias artificiais e opções de esportes náuticos, atrai visitantes de diversas regiões. Atualmente, Rifaina é conhecida por seu turismo, especialmente nos feriados e finais de semana, quando muitas pessoas buscam descanso e lazer em contato com a natureza. Apesar de pequena, a cidade preserva sua história e oferece um ambiente acolhedor para moradores e turistas.',
+          imagens: ['/mainPhotos/rifaina1.png', '/mainPhotos/rifaina2.png', '/mainPhotos/rifaina3.png'],
         },
       ],
       Atrações: [
         {
-          nome: 'Ilha do Sol',
-          descricao: 'Uma atração natural, ideal para passeios de barco',
-          imagens: ['/ilha_sol.png', '/ilha_sol2.png'],
+          nome: 'Praia de Rifaina',
+          descricao: 'A praia artificial às margens do rio Grande é uma das maiores atrações da cidade. Com areia branca, águas calmas e infraestrutura de quiosques e bares, é um local perfeito para relaxar e aproveitar o dia. É ideal para famílias, banhistas e praticantes de esportes náuticos.',
+          imagens: ['/cidades/praia-rifaina1.png', '/cidades/praia-rifaina2.png', '/cidades/praia-rifaina3.png'],
+          link: ''
+        },
+        {
+          nome: 'Represa de Jaguara',
+          descricao: 'A Represa de Jaguara é uma importante obra de engenharia localizada no rio Grande, na divisa entre os estados de São Paulo e Minas Gerais. Sua construção foi concluída em 1971, como parte do sistema de geração de energia elétrica da Usina Hidrelétrica de Jaguara, operada pela CEMIG. A represa desempenha um papel vital na geração de energia e na regulação do fluxo hídrico da região.',
+          imagens: ['/cidades/RepresaJaguara.png', '/cidades/RepresaJaguara2.png'],
           link: ''
         },
       ],
       Cultura: [
-
+        {
+          nome: 'Igreja Matriz de Santo Antônio',
+          descricao: 'A igreja, localizada no centro da cidade, é um marco histórico e religioso de Rifaina. Além de sua importância espiritual, ela representa a arquitetura tradicional das pequenas cidades do interior paulista. O local é ponto de encontro da comunidade e palco de celebrações religiosas, especialmente durante as festas de Santo Antônio, padroeiro da cidade.',
+          imagens: ['/cidades/IgrejaSantoAntonio1.png', '/cidades/IgrejaSantoAntonio2.png'],
+          link: ''
+        },
       ],
       Teatro: []
     },
