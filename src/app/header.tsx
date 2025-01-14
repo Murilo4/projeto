@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { ModalState } from "@/types/modal";
 import HamburgerButton from "@/components/hamburgerButton";
 import Link from 'next/link';
-import { checkUserLoginStatus } from '@/data/userData';
+import Cookies from 'universal-cookie';
 
 const Header: React.FC<HeaderProps> = () => {
   const [activeModal, setActiveModal] = useState<ModalState | null>(null);
@@ -15,14 +15,12 @@ const Header: React.FC<HeaderProps> = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      const response = await checkUserLoginStatus();
-      if (response.success && response.isLoggedIn) {
-        setIsLoggedIn(true);
-      }
-    };
-
-    checkLoginStatus();
+    const cookies = new Cookies();
+    const accessToken = cookies.get('access');
+    const refreshToken = cookies.get('refresh');
+    if (accessToken || refreshToken) {
+      setIsLoggedIn(true);
+    }
   }, []);
 
   const openModal = (modal: 'novidades' | "registro" | "minha-conta") => {

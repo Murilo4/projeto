@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -11,6 +11,7 @@ const ConfirmEmail = () => {
   const [codeSent, setCodeSent] = useState(false)
   const [verificationCode, setVerificationCode] = useState('')
   const [resendTimer, setResendTimer] = useState(0)
+  const [isRequestingCode, setIsRequestingCode] = useState(false)
   const router = useRouter()
   const cookies = new Cookies()
 
@@ -35,28 +36,32 @@ const ConfirmEmail = () => {
           body: JSON.stringify({ token }),
         })
 
+        if (!response.ok) {
+          const errorData = await response.text()
+          console.error('Erro ao validar o token:', errorData)
+          toast.error('Erro ao validar o token. Tente novamente mais tarde.')
+          router.push('/')
+          return
+        }
+
         const data = await response.json()
 
-        if (!response.ok || !data.success) {
+        if (!data.success) {
           toast.warning('Token inválido. Gerando um novo token...')
           await generateNewToken(email)
         } else {
-          toast.success('Email confirmado com sucesso!')
-          await sendVerificationCode(email)
-          setCodeSent(true)
-          setLoading(false)
+          setLoading(false)  // Token válido, agora mostramos as opções de ação.
         }
       } catch (error) {
         console.error('Erro ao validar o token:', error)
         toast.error('Erro ao validar o token. Tente novamente mais tarde.')
-        router.push('/')
       }
     }
 
     const generateNewToken = async (email: string) => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-        const response = await fetch(`${apiUrl}/generate-token/`, {
+        const response = await fetch(`${apiUrl}/generate-new-token/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -64,69 +69,80 @@ const ConfirmEmail = () => {
           body: JSON.stringify({ email }),
         })
 
-        const data = await response.json()
-
-        if (!response.ok || !data.success) {
+        if (!response.ok) {
+          const errorData = await response.text()
+          console.error('Erro ao gerar um novo token:', errorData)
           toast.error('Erro ao gerar um novo token. Tente novamente mais tarde.')
           router.push('/')
           return
         }
 
+        const data = await response.json()
+
         cookies.set('token', data.token)
-        toast.success('Novo token gerado. Por favor, verifique seu email.')
-        router.push('/registro/confirmar-email')
       } catch (error) {
         console.error('Erro ao gerar um novo token:', error)
         toast.error('Erro ao gerar um novo token. Tente novamente mais tarde.')
-        router.push('/')
-      }
-    }
-
-    const sendVerificationCode = async (email: string) => {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-        const response = await fetch(`${apiUrl}/verify-email-code/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email }),
-        })
-
-        const data = await response.json()
-
-        if (!response.ok || !data.success) {
-          toast.error('Erro ao enviar o código de verificação. Tente novamente mais tarde.')
-          return
-        }
-
-        toast.success('Código de verificação enviado para seu email.')
-      } catch (error) {
-        console.error('Erro ao enviar o código de verificação:', error)
-        toast.error('Erro ao enviar o código de verificação. Tente novamente mais tarde.')
       }
     }
 
     validateToken()
   }, [router, cookies])
 
-  const handleCodeSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleSendCode = async () => {
+    setIsRequestingCode(true)
     const email = localStorage.getItem('userEmail')
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-      const response = await fetch(`${apiUrl}/verify-code/`, {
+      const response = await fetch(`${apiUrl}/email-validation/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, code: verificationCode }),
+        body: JSON.stringify({ email }),
       })
+
+      if (!response.ok) {
+        const errorData = await response.text()
+        console.error('Erro ao enviar o código de verificação:', errorData)
+        toast.error('Erro ao enviar o código de verificação. Tente novamente mais tarde.')
+        return
+      }
 
       const data = await response.json()
 
-      if (!response.ok || !data.success) {
+      toast.success('Código de verificação enviado para seu email.')
+      setCodeSent(true)  // Agora a interface muda para inserir o código.
+    } catch (error) {
+      console.error('Erro ao enviar o código de verificação:', error)
+      toast.error('Erro ao enviar o código de verificação. Tente novamente mais tarde.')
+    }
+  }
+
+  const handleCodeSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/verify-email-code/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: localStorage.getItem('userEmail'), code: verificationCode }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.text()
+        console.error('Erro ao verificar o código:', errorData)
+        toast.error('Código de verificação inválido. Tente novamente.')
+        return
+      }
+
+      const data = await response.json()
+
+      if (!data.success) {
         toast.error('Código de verificação inválido. Tente novamente.')
         return
       }
@@ -140,24 +156,24 @@ const ConfirmEmail = () => {
   }
 
   const handleResendCode = async () => {
-    const email = localStorage.getItem('userEmail')
-
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-      const response = await fetch(`${apiUrl}/send-verification-code/`, {
+      const response = await fetch(`${apiUrl}/email-validation/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: localStorage.getItem('userEmail') }),
       })
 
-      const data = await response.json()
-
-      if (!response.ok || !data.success) {
+      if (!response.ok) {
+        const errorData = await response.text()
+        console.error('Erro ao reenviar o código de verificação:', errorData)
         toast.error('Erro ao reenviar o código de verificação. Tente novamente mais tarde.')
         return
       }
+
+      const data = await response.json()
 
       toast.success('Código de verificação reenviado para seu email.')
       setResendTimer(60)
@@ -184,35 +200,46 @@ const ConfirmEmail = () => {
       <ToastContainer />
       <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96">
         {codeSent ? (
-          <form onSubmit={handleCodeSubmit} className="space-y-6">
-            <h1 className="text-2xl font-semibold text-center">Insira o código de verificação</h1>
-            <input
-              type="text"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-              placeholder="Código de 6 dígitos"
-              required
-              className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-3 px-4 rounded-2xl font-semibold hover:bg-blue-600 transition"
-            >
-              Verificar Código
-            </button>
-            <button
-              type="button"
-              onClick={handleResendCode}
-              disabled={resendTimer > 0}
-              className="w-full bg-gray-300 text-gray-700 py-3 px-4 rounded-2xl font-semibold hover:bg-gray-400 transition"
-            >
-              {resendTimer > 0 ? `Reenviar código em ${resendTimer}s` : 'Reenviar Código'}
-            </button>
-          </form>
+          <div className="text-center">
+            <p className="text-lg text-gray-800 mb-6">
+              Agora iremos validar o seu endereço de email, será enviado para o email que usou no cadastro de sua conta!
+            </p>
+            <h1 className="text-xl font-semibold mb-4">Um código de verificação foi enviado para o seu email.</h1>
+            <p className="text-gray-600">Por favor, insira o código para confirmar seu email.</p>
+            <form onSubmit={handleCodeSubmit} className="space-y-6">
+              <input
+                type="text"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                placeholder="Código de 6 dígitos"
+                required
+                className="w-full border border-gray-300 rounded-2xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="submit"
+                className="w-full bg-blue text-black py-3 px-4 rounded-2xl font-semibold hover:bg-blue-600 transition"
+              >
+                Verificar Código
+              </button>
+              <button
+                type="button"
+                onClick={handleResendCode}
+                disabled={resendTimer > 0}
+                className="w-full bg-gray-300 text-gray-700 py-3 px-4 rounded-2xl font-semibold hover:bg-gray-400 transition"
+              >
+                {resendTimer > 0 ? `Reenviar código em ${resendTimer}s` : 'Reenviar Código'}
+              </button>
+            </form>
+          </div>
         ) : (
           <div className="text-center">
-            <h1 className="text-xl font-semibold mb-4">Email confirmado com sucesso!</h1>
-            <p className="text-gray-600">Um código de verificação foi enviado para o seu email.</p>
+            <h1 className="text-xl text-black font-semibold mb-4">Por favor, solicite um código de verificação.</h1>
+            <button
+              onClick={handleSendCode}
+              className="w-full bg-blue text-black py-3 px-4 rounded-2xl font-semibold hover:bg-blue-600 transition"
+            >
+              Enviar Código
+            </button>
           </div>
         )}
       </div>
