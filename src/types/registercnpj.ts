@@ -1,21 +1,21 @@
-export type FormRegisterValues = {
+export type FormRegisterCNPJValues = {
     username: string
     email: string
     confirmEmail: string
     password: string
     confirmPassword: string
-    cpf: string
+    cnpj: string
     phone: string
   }
-  
-  export type FormRegisterErrors = {
+
+  export type FormRegisterCNPJErrors = {
     username: string[]
     email: string[]
     confirmEmail: string[]
     password: string[]
     confirmPassword: string[]
-    cpf: string[]
+    cnpj: string[]
     phone: string[]
   }
 
-  export type InputName = keyof FormRegisterValues
+    export type InputName = keyof FormRegisterCNPJValues
