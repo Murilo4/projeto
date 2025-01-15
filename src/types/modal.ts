@@ -1,6 +1,6 @@
 export type ModalState = {
     isOpen: boolean;  // Define se o modal está aberto ou fechado
-    type: "novidades" | "registro" | null;  // Tipo do modal (novidades, conta, etc.)
+    type: "novidades" | "registro" | 'minha-conta' | null;  // Tipo do modal (novidades, conta, etc.)
   };
   
   // Tipagem para a função que abre o modal

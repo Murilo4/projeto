@@ -15,7 +15,7 @@ const LoginUser: React.FC = () => {
   const [loader, setLoader] = useState<boolean>(false)
 
   const handleRedirect = () => {
-    router.push('/login-email')
+    router.push('/login')
   };
 
   const handleOpenModal = () => {
@@ -30,19 +30,19 @@ const LoginUser: React.FC = () => {
     event.preventDefault()
     setLoader(true)
 
-    const isCPF = /^\d{11}$/.test(identifier.replace(/\D/g, ''));
-    const isCNPJ = /^\d{14}$/.test(identifier.replace(/\D/g, ''));
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+    const isPhone = /^\d{10,11}$/.test(identifier);
 
-    if (!isCPF && !isCNPJ) {
-      toast.error('CPF ou CNPJ inválido.');
+    if (!isEmail && !isPhone) {
+      toast.error('Email ou telefone invalidos.');
       return;
     }
 
-    const key = isCPF ? 'cpf' : 'cnpj';
+    const key = isEmail ? 'email' : 'phone';
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
     try {
-      const response = await fetch(`${apiUrl}/login/`, {
+      const response = await fetch(`${apiUrl}/login-email/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ [key]: identifier, password }),
@@ -50,14 +50,14 @@ const LoginUser: React.FC = () => {
 
       const data = await response.json();
 
-      console.log('Login Response:', data);  // Log para ver a resposta
+      console.log('Login Response:', data)
 
       if (response.status === 406) {
         toast.warning('Email não validado. Redirecionando para a página de confirmação de email.');
-        const cookies = new Cookies();
-        cookies.set('token', data.token);  // Salvar token no cookie
-        console.log('Token set in cookies:', data.token);  // Verificar se o token foi realmente gravado
-        router.push(`/confirmacao-email-cpf-cnpj?identifier=${identifier}`);
+        const cookies = new Cookies()
+        cookies.set('token', data.token)
+        console.log('Token set in cookies:', data.token)
+        router.push(`/confirmacao-email?identifier=${identifier}`)
         return;
       }
 
@@ -105,7 +105,7 @@ const LoginUser: React.FC = () => {
             type="text"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
-            placeholder="CPF/CNPJ"
+            placeholder="Email ou Telefone"
             className="w-full border border-gray-400 rounded-2xl focus:scale-105 placeholder-black p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
@@ -129,11 +129,10 @@ const LoginUser: React.FC = () => {
             onClick={handleRedirect}
             className="w-full mt-4 text-2xl bg-principal-blue hover:scale-95 scale-90 text-white font-bold py-3 px-4 rounded-3xl hover:bg-blue-600 transition"
           >
-            Ou realizar login com o email
+            Ou realizar login com CPF/CNPJ
           </button>
           <button
             type="button"
-            onClick={handleRedirect}
             className="w-full flex text-orange-700 justify-center hover:underline mt-4 text-xl underline"
           >
             Esqueci minha senha
@@ -141,6 +140,7 @@ const LoginUser: React.FC = () => {
         </form>
       </div>
       <div className="bg-gray-300 absolute bottom-0 w-full pt-1">
+
       </div>
     </div>
   );

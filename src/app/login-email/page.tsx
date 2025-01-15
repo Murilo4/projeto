@@ -1,14 +1,13 @@
 import Header from '@/app/header'
 import { Footer } from '@/app/footer'
-import { CreateAccountPage } from '@/app/registro-empresa/registerForm'
+import LoginUser from './login-with-email'
 
-
-export default function RegisterUser() {
+export default function Login() {
   return (
     <>
       <div className="bg-white min-h-screen">
         <Header />
-        <CreateAccountPage />
+        <LoginUser />
         <Footer/>
       </div>
     </>
