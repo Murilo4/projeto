@@ -18,6 +18,10 @@ const LoginUser: React.FC = () => {
     router.push('/login-email')
   };
 
+  const handleRedirectChangePass = () => {
+    router.push('/change-password')
+    };
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   }
