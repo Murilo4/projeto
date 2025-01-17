@@ -50,7 +50,7 @@ export const CreateNewAddress: React.FC = () => {
         [name]: [],
       }))
 
-    if (name === 'username') {
+    if (name === 'addressName') {
       const formattedValue = value
         .toLowerCase()
         .split(' ')
@@ -137,7 +137,6 @@ export const CreateNewAddress: React.FC = () => {
         <h2 className='text-xl underline mb-3 justify-center content-center flex'>Vamos agora adicionar o seu novo endereço</h2>
         <h2 className='text-xl mb-6'>Precisamos apenas que preenche alguns dados:</h2>
           <form className="space-y-4" onSubmit={handleFormSubmit}>
-            {/* Razão Social */}
             <input
               type="text"
               name="username"
@@ -165,7 +164,6 @@ export const CreateNewAddress: React.FC = () => {
             />
             {formErrors.street.length > 0 && <p className="text-red text-sm">{formErrors.street[0]}</p>}
 
-            {/* Confirmar Email */}
             <input
               type="text"
               name="Bairro"
@@ -175,7 +173,6 @@ export const CreateNewAddress: React.FC = () => {
             />
             {formErrors.neighborhood?.length > 0 && <p className="text-red text-sm">{formErrors.neighborhood[0]}</p>}
 
-            {/* Campo CNPJ */}
             <input
               type="text"
               name="Número"
@@ -195,7 +192,15 @@ export const CreateNewAddress: React.FC = () => {
             />
             {formErrors.city.length > 0 && <p className="text-red text-sm">{formErrors.city[0]}</p>}
 
-            {/* Confirmar Senha */}
+            <input
+              type="text"
+              name="password"
+              placeholder="Estado"
+              className="w-full border border-gray-400 focus:scale-105 rounded-2xl placeholder:text-black p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+            />
+            {formErrors.state.length > 0 && <p className="text-red text-sm">{formErrors.state[0]}</p>}
+
             <input
               type="text"
               name="tipo de endereço"

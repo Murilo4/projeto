@@ -57,18 +57,18 @@ const UserAccount = () => {
             phone: data.userData.phone,
             photo: data.userData.photo
           };
-          const AddressData = {
-            street: data.userData.address.street,
-            number: data.userData.address.number,
-            complement: data.userData.address.complement,
-            neighborhood: data.userData.address.neighborhood,
-            city: data.userData.address.city,
-            state: data.userData.address.state,
-            country: data.userData.address.country,
-            cep: data.userData.address.zipCode,
-            addressName: data.userData.address.addressName
-          };
-          setAddressData(AddressData);
+          // const AddressData = {
+          //   street: data.userData.address.street,
+          //   number: data.userData.address.number,
+          //   complement: data.userData.address.complement,
+          //   neighborhood: data.userData.address.neighborhood,
+          //   city: data.userData.address.city,
+          //   state: data.userData.address.state,
+          //   country: data.userData.address.country,
+          //   cep: data.userData.address.zipCode,
+          //   addressName: data.userData.address.addressName
+          // };
+          // setAddressData(AddressData);
           setUserData(fetchedData);
           setOriginalUserData(fetchedData);
         }
@@ -270,7 +270,7 @@ const UserAccount = () => {
 
             {showAddresses && ( 
             <div id='addresses' className="mt-4">
-            <form className="space-y-4" onSubmit={handleSaveClick}>
+            <form className="space-y-4">
             {/* Campo Nome Completo */}
             <p className="text-xl font-sans"></p>
             <input
@@ -339,7 +339,6 @@ const UserAccount = () => {
               onChange={(e) => setAddressData({ ...AddressData, state: e.target.value })}
               className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md shadow-slate-500 placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            
             </form>
             </div>
             )}
