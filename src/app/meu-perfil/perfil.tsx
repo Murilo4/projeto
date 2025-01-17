@@ -8,7 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UserAccount = () => {
-  const [image, setImage] = useState<string>('/foto-padrao.png')
+  const [image, setImage] = useState<string>('/foto-padrao.png');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [userData, setUserData] = useState({
     username: '',
@@ -17,22 +17,34 @@ const UserAccount = () => {
     phone: '',
     photo: ''
   });
+  const [AddressData, setAddressData] = useState({
+    street: '',
+    number: '',
+    complement: '',
+    neighborhood: '',
+    city: '',
+    state: '',
+    cep: '',
+    addressName: '',
+  });
   const [originalUserData, setOriginalUserData] = useState(userData);
-  const [isEditingPassword, setIsEditingPassword] = useState(false)
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [isEditing, setIsEditing] = useState(true); // Allow editing by default
-  const [IsPasswordVisible, SetPasswordVisible] = useState(false)
+  const [IsPasswordVisible, SetPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAddresses, setShowAddresses] = useState(false); // Estado para controlar a visibilidade dos endereços
   const router = useRouter();
 
   useEffect(() => {
     // Função para buscar dados do usuário
     const fetchUserData = async () => {
       try {
-        const cookies = new Cookies()
+        const cookies = new Cookies();
         const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
         const response = await fetch(`${apiUrl}/user-profile/`, {
           method: 'GET',
-          headers: { 'Content-Type': 'application/json',
+          headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${cookies.get('access')}`
           },
         });
@@ -45,6 +57,18 @@ const UserAccount = () => {
             phone: data.userData.phone,
             photo: data.userData.photo
           };
+          const AddressData = {
+            street: data.userData.address.street,
+            number: data.userData.address.number,
+            complement: data.userData.address.complement,
+            neighborhood: data.userData.address.neighborhood,
+            city: data.userData.address.city,
+            state: data.userData.address.state,
+            country: data.userData.address.country,
+            cep: data.userData.address.zipCode,
+            addressName: data.userData.address.addressName
+          };
+          setAddressData(AddressData);
           setUserData(fetchedData);
           setOriginalUserData(fetchedData);
         }
@@ -74,11 +98,15 @@ const UserAccount = () => {
   };
 
   const handleButtonClick = () => {
-    fileInputRef.current?.click(); // Aciona o input de arquivo usando a referência
+    fileInputRef.current?.click();
   };
 
   const HandleRedirect = () => {
-    router.push('/')
+    router.push('/');
+  };
+
+  const HandleRedirectCreateAddress = () => {
+    router.push('/create-address');
   }
 
   const handleSaveClick = async (e: React.FormEvent) => {
@@ -149,9 +177,9 @@ const UserAccount = () => {
       <ToastContainer />
       <div className='flex ml-350px mb-8'> 
         <button
-            onClick={HandleRedirect}
-            className="flex text-xl border-4 hover:scale-105 border-blue-thirth rounded-xl px-3 justify-center"
-            >Voltar</button>
+          onClick={HandleRedirect}
+          className="flex text-xl border-4 hover:scale-105 border-blue-thirth rounded-xl px-3 justify-center"
+        >Voltar</button>
       </div>
       <div className="flex justify-end">
         <div>
@@ -226,9 +254,99 @@ const UserAccount = () => {
                 Alterar senha
               </button>
             </div>
+            <div className='flex flex-col'>
+
+            <h2 className='mt-10 text-2xl text-center'>Meus endereços</h2>
+
+            <button 
+              onClick={() => setShowAddresses(!showAddresses)}
+              className='mt-4 flex text-xl border border-gray-500 hover:text-white bg-green-border hover:bg-green-button rounded-xl py-2 px-2'>
+              {showAddresses ? 'Ocultar meus endereços' : 'Ver meus endereços'}
+            </button>
+            <button 
+              onClick={HandleRedirectCreateAddress}
+              className='mt-4 flex text-xl border border-gray-500 hover:text-white bg-green-border hover:bg-green-button rounded-xl py-2 px-2'>
+            Adicionar novo endereço</button>
+
+            {showAddresses && ( 
+            <div id='addresses' className="mt-4">
+            <form className="space-y-4" onSubmit={handleSaveClick}>
+            {/* Campo Nome Completo */}
+            <p className="text-xl font-sans"></p>
+            <input
+              type="text"
+              value={AddressData.addressName}
+              placeholder='Nome endereço'
+              onChange={(e) => setAddressData({ ...AddressData, addressName: e.target.value })}
+              className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md shadow-slate-500 placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <p className="text-xl font-sans">Rua</p>
+            <input
+              type="text"
+              value={AddressData.street}
+              placeholder='Rua'
+              onChange={(e) => setAddressData({ ...AddressData, street: e.target.value })}
+              className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md shadow-slate-500 placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <p className="text-xl font-sans">Bairro:</p>
+            <input
+              type="text"
+              value={AddressData.neighborhood}
+              placeholder='CPF'
+              onChange={(e) => setAddressData({ ...AddressData, neighborhood: e.target.value })}
+              className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md shadow-slate-500 placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <p className="text-xl font-sans">Número:</p>
+            <input
+              type="text"
+              value={AddressData.number}
+              placeholder='Número'
+              onChange={(e) => setAddressData({ ...AddressData, number: e.target.value })}
+              className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md shadow-slate-500 placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <p className="text-xl font-sans">Complemento:</p>
+            <input
+              type="text"
+              value={AddressData.complement}
+              placeholder='complemento'
+              onChange={(e) => setAddressData({ ...AddressData, complement: e.target.value })}
+              className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md shadow-slate-500 placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <p className="text-xl font-sans">Cidade:</p>
+            <input
+              type="text"
+              value={AddressData.city}
+              placeholder='Cidade'
+              onChange={(e) => setAddressData({ ...AddressData, complement: e.target.value })}
+              className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md shadow-slate-500 placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <p className="text-xl font-sans">CEP:</p>
+            <input
+              type="text"
+              value={AddressData.cep}
+              placeholder='CEP'
+              onChange={(e) => setAddressData({ ...AddressData, cep: e.target.value })}
+              className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md shadow-slate-500 placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <p className="text-xl font-sans">Estado:</p>
+            <input
+              type="text"
+              value={AddressData.state}
+              placeholder='Estado'
+              onChange={(e) => setAddressData({ ...AddressData, state: e.target.value })}
+              className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md shadow-slate-500 placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            
+            </form>
+            </div>
+            )}
+          </div>
           </form>
         </div>
-
+        
         {/* Foto de perfil usuário */}
         <div className="flex flex-col items-center mt-6">
           <div className="relative rounded-full overflow-hidden bg-black w-80 h-80 shadow-md shadow-slate-500">
@@ -249,7 +367,7 @@ const UserAccount = () => {
             />
             <button 
               onClick={handleButtonClick}
-              className="absolute bottom-2 left-1/2 transform border-4 border-blue-thirth bg-white mb-2  -translate-x-1/2 bg-blue-500 text-black rounded-full px-4 py-2">
+              className="absolute bottom-2 left-1/2 transform border-4 border-blue-thirth bg-white mb-2 -translate-x-1/2 bg-blue-500 text-black rounded-full px-4 py-2">
               Alterar imagem
             </button>
           </div>
@@ -260,4 +378,4 @@ const UserAccount = () => {
   );
 }
 
-export default UserAccount
+export default UserAccount;

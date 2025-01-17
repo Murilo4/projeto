@@ -26,6 +26,10 @@ const LoginUser: React.FC = () => {
     setIsModalOpen(false);
   }
 
+  const handleRedirectForgetPass = () => {
+    router.push('/change-password')
+    };
+
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setLoader(true)
@@ -133,6 +137,7 @@ const LoginUser: React.FC = () => {
           </button>
           <button
             type="button"
+            onClick={handleRedirectForgetPass}
             className="w-full flex text-orange-700 justify-center hover:underline mt-4 text-xl underline"
           >
             Esqueci minha senha

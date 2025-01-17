@@ -10,10 +10,7 @@ import { useParams } from 'next/navigation' // Correção para capturar parâmet
 const ResetPassword: React.FC = () => {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [oldPassword, setOldPassword] = useState('')
   const router = useRouter()
-
-  // Usando useParams para capturar os parâmetros 'uid' e 'token' da URL
   const { uid, token } = useParams()
 
   const handlePasswordReset = async (e: React.FormEvent) => {
@@ -30,13 +27,13 @@ const ResetPassword: React.FC = () => {
 
       // Construindo o payload com os dados do formulário
       const payload = {
-        oldPassword,
         newPassword,
         token,
         uid
       }
+      console.log(payload)
 
-      const response = await fetch(`${apiUrl}/reset/`, {
+      const response = await fetch(`${apiUrl}/forgot-password-change/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -71,22 +68,12 @@ const ResetPassword: React.FC = () => {
         <h2 className="text-2xl font-bold text-center">Redefinir Senha</h2>
         <form onSubmit={handlePasswordReset} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-black mb-1">Senha Atual</label>
-            <input
-              type="password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-500 focus:scale-100 hover:scale-95 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-thirth"
-              required
-            />
-          </div>
-          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Nova Senha</label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-500 focus:scale-100 hover:scale-95  rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-thirth"
+              className="w-full px-3 py-2 border border-gray-500 focus:scale-100 hover:scale-95 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-thirth"
               required
             />
           </div>

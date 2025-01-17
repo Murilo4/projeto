@@ -18,7 +18,7 @@ const LoginUser: React.FC = () => {
     router.push('/login-email')
   };
 
-  const handleRedirectChangePass = () => {
+  const handleRedirectForgetPass = () => {
     router.push('/change-password')
     };
 
@@ -137,7 +137,7 @@ const LoginUser: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={handleRedirect}
+            onClick={handleRedirectForgetPass}
             className="w-full flex text-orange-700 justify-center hover:underline mt-4 text-xl underline"
           >
             Esqueci minha senha

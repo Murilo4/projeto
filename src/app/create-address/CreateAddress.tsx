@@ -7,31 +7,33 @@ import { userEmailAtom } from '@/states/atoms/userData'
 import { useSetRecoilState } from 'recoil'
 import Cookies from 'universal-cookie'
 import registerSchema from '@/schemas/registerValidation'
-import { FormRegisterCNPJErrors, FormRegisterCNPJValues, InputName } from '@/types/registercnpj'
+import { FormRegisterAddressErrors, FormRegisterAddressValues, InputName } from '@/types/newAddress'
 
-const initialValues: FormRegisterCNPJValues = {
-  username: '',
-  email: '',
-  confirmEmail: '',
-  password: '',
-  confirmPassword: '',
-  cnpj: '',
-  phone: '',
+const initialValues: FormRegisterAddressValues = {
+    addressName: '',
+    state: '',
+    city: '', 
+    street: '', 
+    neighborhood: '', 
+    addressType: '',
+    number: '',
+    cep: '',
 }
 
-const initialErrors: FormRegisterCNPJErrors = {
-  username: [],
-  email: [],
-  confirmEmail: [],
-  password: [],
-  confirmPassword: [],
-  cnpj: [],
-  phone: [],
+const initialErrors: FormRegisterAddressErrors = {
+    addressName: [],
+    state: [],
+    city: [],
+    street: [],
+    neighborhood: [],
+    addressType: [],
+    number: [],
+    cep: [],
 }
 
-export const CreateAccountPage: React.FC = () => {
-  const [formValues, setFormValues] = useState<FormRegisterCNPJValues>(initialValues)
-  const [formErrors, setFormErrors] = useState<FormRegisterCNPJErrors>(initialErrors)
+export const CreateNewAddress: React.FC = () => {
+  const [formValues, setFormValues] = useState<FormRegisterAddressValues>(initialValues)
+  const [formErrors, setFormErrors] = useState<FormRegisterAddressErrors>(initialErrors)
   const [loader, setLoader] = useState<boolean>(false)
 
   const router = useRouter()
@@ -58,11 +60,6 @@ export const CreateAccountPage: React.FC = () => {
       setFormValues((prevValues) => ({
         ...prevValues,
         [name]: formattedValue,
-      }))
-    } else if (name === 'email' || name === 'confirmEmail') {
-      setFormValues((prevValues) => ({
-        ...prevValues,
-        [name]: value.toLowerCase(),
       }))
     } else {
       setFormValues((prevValues) => ({
@@ -97,10 +94,11 @@ export const CreateAccountPage: React.FC = () => {
         // JSON to be sent to the backend
         console.log('JSON to be sent:', JSON.stringify(formValues))
 
-        const response = await fetch(`${apiUrl}/create/`, {
+        const response = await fetch(`${apiUrl}/create-address/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${cookies.get('access')}`
           },
           body: JSON.stringify(formValues),
         })
@@ -117,12 +115,7 @@ export const CreateAccountPage: React.FC = () => {
 
         if (data.success) {
           toast.success(data.message)
-          setEmail(formValues.email) // Atualiza o estado global do email
-          // Save email to local storage
-          localStorage.setItem('userEmail', formValues.email)
-          // Save JWT token to cookies
-          cookies.set('token', data.token)
-          router.push('/confirmacao-email')
+          router.push('/meu-perfil')
         } else {
           console.log('API error:', data.message, data.errors)
           toast.warning(data.message)
@@ -132,92 +125,84 @@ export const CreateAccountPage: React.FC = () => {
         toast.error('Erro ao enviar a requisição. Tente novamente mais tarde.')
       }
     }
-
     setLoader(false)
   }
 
   return (
     <>
       <ToastContainer />
-      <div className="flex h-screen">
-        {/* Metade Esquerda (Azul) */}
-        <div className="w-1/2 bg-principal-blue text-white flex flex-col justify-center p-8">
-          <h2 className="text-2xl font-bold mb-4">Que bom que você deseja Fazer parte da Contur!</h2>
-          <p className="text-sm mb-6">
-            Vamos realizar o seu cadastro rapidamente para que você possa desfrutar de tudo que podemos oferecer!
-          </p>
-          <p className="text-sm mb-6">
-            Caso já tenha uma conta e deseja utilizá-la, você pode realizar o login através deste botão:
-          </p>
-          <a href="/login" target="_blank">
-            <button className="bg-white text-black py-3 px-4 rounded-3xl font-bold hover:bg-gray-200 transition">
-              Realizar login
-            </button>
-          </a>
-        </div>
-
+      <div className="flex h-screen justify-center">
         {/* Metade Direita (Branca) */}
         <div className="w-1/2 bg-gray-100 flex flex-col justify-center p-8">
+        <h2 className='text-xl underline mb-3 justify-center content-center flex'>Vamos agora adicionar o seu novo endereço</h2>
+        <h2 className='text-xl mb-6'>Precisamos apenas que preenche alguns dados:</h2>
           <form className="space-y-4" onSubmit={handleFormSubmit}>
             {/* Razão Social */}
             <input
               type="text"
               name="username"
-              placeholder="Razão social"
+              placeholder="Nome para o endereço"
               className="w-full border border-gray-400 focus:scale-105 rounded-2xl placeholder:text-black p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={handleInputChange}
             />
-            {formErrors.username.length > 0 && <p className="text-red text-sm">{formErrors.username[0]}</p>}
+            {formErrors.addressName.length > 0 && <p className="text-red text-sm">{formErrors.addressName[0]}</p>}
+            <input
+              type="text"
+              name="cep"
+              placeholder="cep"
+              className="w-full border border-gray-400 focus:scale-105 rounded-2xl placeholder:text-black p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={handleInputChange}
+            />
+            {formErrors.cep.length > 0 && <p className="text-red text-sm">{formErrors.cep[0]}</p>}
 
             {/* Campo Email */}
             <input
-              type="email"
-              name="email"
-              placeholder="Email para contato"
+              type="text"
+              name="Rua"
+              placeholder="Rua"
               className="w-full border border-gray-400 focus:scale-105 rounded-2xl placeholder:text-black p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={handleInputChange}
             />
-            {formErrors.email.length > 0 && <p className="text-red text-sm">{formErrors.email[0]}</p>}
+            {formErrors.street.length > 0 && <p className="text-red text-sm">{formErrors.street[0]}</p>}
 
             {/* Confirmar Email */}
             <input
-              type="email"
-              name="confirmEmail"
-              placeholder="Confirme o Email"
+              type="text"
+              name="Bairro"
+              placeholder="Bairro"
               className="w-full border border-gray-400 focus:scale-105 rounded-2xl placeholder:text-black p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={handleInputChange}
             />
-            {formErrors.confirmEmail?.length > 0 && <p className="text-red text-sm">{formErrors.confirmEmail[0]}</p>}
+            {formErrors.neighborhood?.length > 0 && <p className="text-red text-sm">{formErrors.neighborhood[0]}</p>}
 
             {/* Campo CNPJ */}
             <input
               type="text"
-              name="cnpj"
-              placeholder="CNPJ"
+              name="Número"
+              placeholder="Número"
               className="w-full border border-gray-400 focus:scale-105 rounded-2xl placeholder:text-black p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={handleInputChange}
             />
-            {formErrors.cnpj.length > 0 && <p className="text-red text-sm">{formErrors.cnpj[0]}</p>}
+            {formErrors.number.length > 0 && <p className="text-red text-sm">{formErrors.number[0]}</p>}
 
             {/* Campo Senha */}
             <input
-              type="password"
+              type="text"
               name="password"
-              placeholder="Senha"
+              placeholder="Cidade"
               className="w-full border border-gray-400 focus:scale-105 rounded-2xl placeholder:text-black p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={handleInputChange}
             />
-            {formErrors.password.length > 0 && <p className="text-red text-sm">{formErrors.password[0]}</p>}
+            {formErrors.city.length > 0 && <p className="text-red text-sm">{formErrors.city[0]}</p>}
 
             {/* Confirmar Senha */}
             <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirme a senha"
+              type="text"
+              name="tipo de endereço"
+              placeholder="Tipo de endereço"
               className="w-full border border-gray-400 focus:scale-105 rounded-2xl placeholder:text-black p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={handleInputChange}
             />
-            {formErrors.confirmPassword?.length > 0 && <p className="text-red text-sm">{formErrors.confirmPassword[0]}</p>}
+            {formErrors.addressType?.length > 0 && <p className="text-red text-sm">{formErrors.addressType[0]}</p>}
 
             <button
               type="submit"
@@ -231,3 +216,5 @@ export const CreateAccountPage: React.FC = () => {
     </>
   )
 }
+
+export default CreateNewAddress
