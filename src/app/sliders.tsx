@@ -1,9 +1,20 @@
 'use client'
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Slider from "@/components/Slider";
 import { SwiperProps, SwiperSlide } from "swiper/react";
 
+interface Slide {
+  src: string;
+  alt: string;
+  title: string;
+  descricao: string;
+  horario: string;
+  link: string;
+}
+
 export const Sliders = () => {
+  const [slides, setSlides] = useState<Slide[]>([]);
+
   const settings: SwiperProps = {
     spaceBetween: 10,
     slidesPerView: 3,
@@ -39,14 +50,37 @@ export const Sliders = () => {
     },
   }
 
-  // Array de slides para as imagens
-  const slides = [
-    { src: "/sliders/hotel1.jpg", alt: "hotel", title: "Hotel de luxo 4 estrelas", descricao: "Um hotel de luxo com vista panorâmica.", horario: "24h", link: "/hotel1" },
-    { src: "/sliders/hotel2.jpg", alt: "hotel", title: "Hotel de luxo 5 estrelas", descricao: "Hospedagem de luxo e alto padrão de qualidade.", horario: "24h", link: "/hotel2" },
-    { src: "/sliders/restaurante1.jpg", alt: "restaurante", title: "Restaurante em ótima localização", descricao: "Restaurante gourmet com pratos sofisticados.", horario: "12h - 22h", link: "/restaurante1" },
-    { src: "/sliders/hotel3.jpg", alt: "hotel", title: "Hotel Muito bem avaliado", descricao: "Hospedagem premiada por sua excelência.", horario: "24h", link: "/hotel3" },
-    { src: "/sliders/restaurante2.jpg", alt: "restaurante", title: "Restaurante com vista para o mar", descricao: "Comida deliciosa com uma vista incrível.", horario: "12h - 23h", link: "/restaurante2" },
-  ];
+  const fetchSlides = async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    try {
+      const response = await fetch(`${apiUrl}/slides`);
+      const data = await response.json();
+      if (data.slides && data.slides.length > 0) {
+        setSlides(data.slides);
+      } else {
+        setSlides([
+          { src: "/sliders/hotel1.jpg", alt: "hotel", title: "Hotel de luxo 4 estrelas", descricao: "Um hotel de luxo com vista panorâmica.", horario: "24h", link: "/hotel1" },
+          { src: "/sliders/hotel2.jpg", alt: "hotel", title: "Hotel de luxo 5 estrelas", descricao: "Hospedagem de luxo e alto padrão de qualidade.", horario: "24h", link: "/hotel2" },
+          { src: "/sliders/restaurante1.jpg", alt: "restaurante", title: "Restaurante em ótima localização", descricao: "Restaurante gourmet com pratos sofisticados.", horario: "12h - 22h", link: "/restaurante1" },
+          { src: "/sliders/hotel3.jpg", alt: "hotel", title: "Hotel Muito bem avaliado", descricao: "Hospedagem premiada por sua excelência.", horario: "24h", link: "/hotel3" },
+          { src: "/sliders/restaurante2.jpg", alt: "restaurante", title: "Restaurante com vista para o mar", descricao: "Comida deliciosa com uma vista incrível.", horario: "12h - 23h", link: "/restaurante2" },
+        ]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch slides:", error);
+      setSlides([
+        { src: "/sliders/hotel1.jpg", alt: "hotel", title: "Hotel de luxo 4 estrelas", descricao: "Um hotel de luxo com vista panorâmica.", horario: "24h", link: "/hotel1" },
+        { src: "/sliders/hotel2.jpg", alt: "hotel", title: "Hotel de luxo 5 estrelas", descricao: "Hospedagem de luxo e alto padrão de qualidade.", horario: "24h", link: "/hotel2" },
+        { src: "/sliders/restaurante1.jpg", alt: "restaurante", title: "Restaurante em ótima localização", descricao: "Restaurante gourmet com pratos sofisticados.", horario: "12h - 22h", link: "/restaurante1" },
+        { src: "/sliders/hotel3.jpg", alt: "hotel", title: "Hotel Muito bem avaliado", descricao: "Hospedagem premiada por sua excelência.", horario: "24h", link: "/hotel3" },
+        { src: "/sliders/restaurante2.jpg", alt: "restaurante", title: "Restaurante com vista para o mar", descricao: "Comida deliciosa com uma vista incrível.", horario: "12h - 23h", link: "/restaurante2" },
+      ]);
+    }
+  };
+
+  useEffect(() => {
+    fetchSlides();
+  }, []);
 
   // Função para redirecionar ao clicar no botão
   const handleButtonClick = (link: string) => {
