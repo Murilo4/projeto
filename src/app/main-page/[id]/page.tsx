@@ -1,5 +1,5 @@
-import { Footer } from "../footer";
-import Header from "../header";
+import { Footer } from "../../footer";
+import Header from "../../header";
 import Main from "./main-item";
 
 export default function searchPlaces () {

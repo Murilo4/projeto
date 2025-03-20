@@ -3,7 +3,7 @@ import { CidadeData } from '@/types/Restaurantes';
 const data: {
     [cidade: string]: CidadeData;
   } = {
-    Franca: {
+    franca: {
       Restaurantes: [
         {
           nome: 'Restaurante Cio da Terra Grill',
@@ -112,7 +112,7 @@ const data: {
       ]
 
     },
-    Rifaina: {
+    rifaina: {
       Restaurantes: [
         {
           nome: 'Bar e Petiscaria Deck 034',

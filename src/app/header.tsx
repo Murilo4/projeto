@@ -74,10 +74,11 @@ const Header: React.FC<HeaderProps> = () => {
   };
 
   return (
-    <header className="bg-background shadow-md fixed top-0 w-full z-50">
-      <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
+    <header className="bg-background max-h-32 shadow-md fixed top-0 w-full z-50">
+      <div className="mx-auto max-w-7xl px-4 pt-1 flex items-center justify-between bg-background">
         <Link href="/" passHref>
-          <img src="/novo_Logo.jpeg" width={90} height={100} alt="logo" />
+          <img src="/novo_Logo.jpg" width={135} height={100} alt="logo"
+          className="bg-background object-cover max-h-32 max-w-48" />
         </Link>
 
         <nav className="hidden lg:flex items-center flex-grow justify-center space-x-8">

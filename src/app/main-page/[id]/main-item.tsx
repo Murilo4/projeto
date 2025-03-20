@@ -1,12 +1,16 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import Cookies from 'universal-cookie'
 import Slider from '@/components/Slider'; // Componente Slider fornecido
 import { SwiperSlide } from 'swiper/react';
 import { SwiperProps } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
+import { toast, ToastContainer } from 'react-toastify'
+import { useRouter, useParams } from 'next/navigation'
+
 
 const data = {
   nome: "Restaurante Cio da Terra Grill",
@@ -30,13 +34,36 @@ const data = {
   comments: [],
 };
 
+interface Place {
+  id: number
+  placeName: string
+  about: string
+  description: string
+  enterprise: number
+  locationX: string
+  locationY: string
+  rating_number: number | null
+  type: string
+  workStart: string
+  workStop: string
+}
+
+interface PlaceData {
+  place: Place
+  photos: string[]
+  categories: string[]
+}
+
 const Main = () => {
   const [comments, setComments] = useState<string[]>(data.comments || []);
   const [newComment, setNewComment] = useState<string>("");
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const cookies = useMemo(() => new Cookies(), [])
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [isFavorited, setIsFavorited] = useState<boolean>(false); // Estado para favoritar o local
-
+  const { id } = useParams()
+  const [loader, setLoader] = useState<boolean>(false)
+  const [place, setPlace] = useState<PlaceData | null>(null)
   const handleAddComment = () => {
     if (newComment.trim() !== "") {
       setComments([...comments, newComment.trim()]);
@@ -70,7 +97,35 @@ const Main = () => {
     setIsFavorited(!isFavorited); // Altera o estado de favorito
   };
 
+   const fetchPlaces = useCallback(async () => {
+      setLoader(true)
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+        const response = await fetch(`${apiUrl}/get-place/${id}/`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${cookies.get('access')}`,
+          },
+        })
+        const data = await response.json()
+        if (response.ok && data.success) {
+          setPlace(data.place)
+        } else {
+          toast.error('Erro ao carregar locais')
+        }
+      } catch (error) {
+        console.error('Erro na requisição:', error)
+        toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
+      }
+      setLoader(false)
+    }, [cookies])
+  
+    useEffect(() => {
+        fetchPlaces()
+      }, [fetchPlaces])
   return (
+    <>
+    <ToastContainer/>
     <div className="p-4 max-w-4xl mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl ml-2 mb-2 font-bold">{data.nome}</h1>
@@ -203,6 +258,7 @@ const Main = () => {
         </ul>
       </div>
     </div>
+    </>
   );
 };
 

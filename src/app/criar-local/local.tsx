@@ -126,21 +126,14 @@ const CreateLocal: React.FC = () => {
       setFormValues((prevValues) => ({
         ...prevValues,
         categories: checked
-          ? [...prevValues.categories.split(','), value].join(',')
+          ? [...prevValues.categories.split(',').filter(Boolean), value].join(',')
           : prevValues.categories.split(',').filter((cat) => cat !== value).join(',')
       }))
-    } else {
-      setFormValues((prevValues) => ({
-        ...prevValues,
-        [name]: value,
-      }))
-    }
-    if (type === 'checkbox' && name === 'tipos') {
-      console.log("chegou aqui")
+    } else if (type === 'checkbox' && name === 'tipos') {
       setFormValues((prevValues) => ({
         ...prevValues,
         type: checked
-          ? [...prevValues.type.split(','), value].join(',')
+          ? [...prevValues.type.split(',').filter(Boolean), value].join(',')
           : prevValues.type.split(',').filter((type) => type !== value).join(',')
       }))
     } else {
@@ -150,7 +143,6 @@ const CreateLocal: React.FC = () => {
       }))
     }
   }
-
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -184,18 +176,27 @@ const CreateLocal: React.FC = () => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
 
-      const formData = new FormData()
-      Object.keys(formValues).forEach((key) => {
-        formData.append(key as keyof FormRegisterPlaceValues, formValues[key as keyof FormRegisterPlaceValues])
-      })
+      // Prepare categories as an array of objects with id and category
+      const selectedCategories = formValues.categories.split(',').filter(Boolean)
+      const categoryObjects = selectedCategories.map((category) => {
+        const categoryData = categoriesData.find((cat) => cat.category === category)
+        return categoryData ? { id: categoryData.id, category: categoryData.category } : null
+      }).filter(Boolean)
 
-      photos.forEach((photo) => {
-        formData.append('photos', photo)
-      })
+      // Prepare the payload as JSON
+      const payload = {
+        ...formValues,
+        categories: categoryObjects,
+        photos: photos.map((photo) => photo.name), // Assuming backend handles file uploads separately
+      }
 
       const response = await fetch(`${apiUrl}/create-place/`, {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${cookies.get('access')}`,
+        },
+        body: JSON.stringify(payload),
       })
 
       const data = await response.json()
@@ -228,14 +229,14 @@ const CreateLocal: React.FC = () => {
   return (
     <>
       <ToastContainer />
-      <div className="flex h-screen">
-        <div className="w-4/5 bg-gray-100 flex flex-col justify-end p-8 shadow-lg rounded-lg">
+      <div className="flex h-full scale-90">
+        <div className="w-9/12 bg-gray-100 flex flex-col justify-end p-8 pt-0 shadow-lg rounded-lg">
           <div className='flex border-2 w-20 bg-blue rounded-xl p-2 mb-4 shadow-sm bg-blue-500 text-white'>
             <button className='flex content-center justify-center pl-2'
               onClick={handlebuttonBackClick}>Voltar
             </button>
           </div>
-          <form className="space-y-4 mx-auto w-3/4" onSubmit={handleFormSubmit}>
+          <form className="space-y-4 mx-auto w-9/12" onSubmit={handleFormSubmit}>
             <input
               type="text"
               name="placeName"
@@ -279,15 +280,6 @@ const CreateLocal: React.FC = () => {
               onChange={handleInputChange}
             />
             {formErrors.about.length > 0 && <p className="text-red-500 text-sm">{formErrors.about[0]}</p>}
-
-            <input
-              type="photo"
-              name="photo"
-              placeholder="Adicione foto ao seu estabelecimento"
-              className="w-full border border-gray-300 focus:scale-105 rounded-2xl placeholder:text-gray-600 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
-              onChange={handleInputChange}
-            />
-            {formErrors.photo?.length > 0 && <p className="text-red-500 text-sm">{formErrors.photo[0]}</p>}
 
             <input
               type="text"
@@ -364,9 +356,9 @@ const CreateLocal: React.FC = () => {
             </button>
           </form>
         </div>
-        <div className="w-1/3 bg-white p-8 shadow-lg rounded-lg flex flex-col justify-between">
+        <div className="w-5/12 bg-white  pt-0 shadow-lg rounded-lg flex flex-col justify-between">
           <h2 className="text-2xl font-bold mb-4">Pré visualização</h2>
-          <div className="border border-gray-300 p-2 rounded-lg flex flex-col justify-between h-full">
+          <div className="border border-gray-300 p-1 rounded-lg flex flex-col justify-between h-full">
             <h3 className="text-xl font-bold mt-2 text-center">{formValues.placeName || 'Nome do estabelecimento'}</h3>
             <div className="mx-auto w-3/4">
               <Carousel
@@ -436,17 +428,6 @@ const CreateLocal: React.FC = () => {
                 <img src="/maps.jpg" alt="Map placeholder" className="w-full h-full object-cover rounded-lg" />
               </div>
               <p className="text-gray-800 mt-2">{formValues.city && formValues.state ? `${formValues.city}, ${formValues.state}` : 'Localização'}</p>
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold">Adicionar Comentário</h3>
-                <textarea
-                  className="w-full border rounded-md p-2 mt-2 h-20"
-                  placeholder="Escreva seu comentário aqui..."
-                  disabled={true}
-                />
-                <p className='border-2 bg-blue-thirth w-1/3 rounded-lg p-3 mt-2 cursor-pointer'>
-                  Enviar Comentário
-                </p>
-              </div>
             </div>
           </div>
         </div>

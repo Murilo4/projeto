@@ -161,11 +161,11 @@ const Search = () => {
 
   return (
     <section className="mx-auto mt-18 mb-20 max-w-1440px px-40 bg-background">
-      <div className="relative w-full h-656px">
+      <div className="relative w-full h-530px mt-5">
         <Slider settings={settings}>
           {slides.map((slide, index) => (
-            <SwiperSlide key={index} className="relative w-full h-656px">
-              <div className="relative w-full h-656px">
+            <SwiperSlide key={index} className="relative w-full h-530px">
+              <div className="relative w-full h-530px">
                 <img
                   src={slide.src}
                   alt={slide.alt}
