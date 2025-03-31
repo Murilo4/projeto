@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast, ToastContainer } from 'react-toastify'
-import { FormRegisterPlaceErrors, FormRegisterPlaceValues } from '@/types/registerPlace'
+import { FormRegisterPlaceErrors, FormRegisterPlaceValues } from '@/types/editplace'
 import registerPlace from '@/schemas/registerPlace'
 import 'react-toastify/dist/ReactToastify.css'
 import Cookies from 'universal-cookie'
@@ -20,35 +20,21 @@ interface LocalType {
     type: string;
 }
 
-interface LocalData {
-    placeName: string;
-    description: string;
-    photo: string;
-    city: string;
-    state: string;
-    type: string[];
-    locationX: string;
-    locationY: string;
-    workStart: string;
-    workStop: string;
-    about: string;
-    category: string[];
-}
 
 const initialValues: FormRegisterPlaceValues = {
     placeName: '',
     description: '',
-    photo: '',
+    photo: [],
     city: '',
     state: '',
-    type: '',
+    type: [],
     locationX: '',
     locationY: '',
     workStart: '',
     workStop: '',
     about: '',
-    categories: '',
-    enterprese: '',
+    categories: [],
+    // enterprese: '',
 }
 
 const initialErrors: FormRegisterPlaceErrors = {
@@ -64,7 +50,7 @@ const initialErrors: FormRegisterPlaceErrors = {
     workStop: [],
     about: [],
     categories: [],
-    enterprese: [],
+    // enterprese: [],
 }
 
 const EditLocal: React.FC = () => {
@@ -93,15 +79,29 @@ const EditLocal: React.FC = () => {
             })
             const data = await response.json()
             if (response.ok && data.success) {
+                // Ajustando os dados para incluir todos os campos obrigatórios
                 const fetchedValues = {
-                    ...data.places,
-                    categories: data.places.categories || [], // Ensure categories is an array
-                    type: data.places.type || [], // Ensure type is an array
+                    placeName: data.place.placeName || '',  // Adicionando valor default
+                    description: data.place.description || '', // Adicionando valor default
+                    workStart: data.place.workStart || '',  // Adicionando valor default
+                    workStop: data.place.workStop || '',  // Adicionando valor default
+                    about: data.place.about || '',  // Adicionando valor default
+                    city: data.place.city || '',  // Adicionando valor default
+                    state: data.place.state || '',  // Adicionando valor default
+                    categories: data.place.categories || [], // Garantindo que seja um array
+                    type: data.place.type || [], // Garantindo que seja um array
+                    locationX: data.place.locationX || null,  // Valor padrão para locationX
+                    locationY: data.place.locationY || null,  // Valor padrão para locationY
+                    photo: data.place.photos || [],  // Garantindo que seja um array de fotos (pode estar vazio)
+                    enterprise: data.place.enterprise || '',
                 }
-                setFormValues(fetchedValues)
-                setOriginalValues(fetchedValues)
-                const backendPhotoUrls = data.places.photos.map((photo: string) => `http://localhost:8000${photo}`)
-                setPhotoPreviews(backendPhotoUrls)
+    
+                setFormValues(fetchedValues)  // Preenche os valores do formulário
+                setOriginalValues(fetchedValues)  // Armazena os valores originais
+              
+                // Configura as pré-visualizações das fotos
+                const backendPhotoUrls = data.place.photos.map((photo: string) => `http://localhost:8000${photo}`)
+                setPhotoPreviews(backendPhotoUrls)  // Preenche as pré-visualizações das fotos
             } else {
                 toast.error('Erro ao carregar os dados do local.')
             }
@@ -244,6 +244,8 @@ const EditLocal: React.FC = () => {
             formData.append('workStart', formValues.workStart)
             formData.append('workStop', formValues.workStop)
             formData.append('about', formValues.about)
+            formData.append('lowerPrice', formValues.lowerPrice)
+            formData.append('higherPrice', formValues.higherPrice)
             formData.append('categories', JSON.stringify(categoryObjects))
 
             photos.forEach((photo) => {
@@ -335,6 +337,22 @@ const EditLocal: React.FC = () => {
                         />
                         {formErrors.workStop.length > 0 && <p className="text-red-500 text-sm">{formErrors.workStop[0]}</p>}
 
+                        {/* <input
+                            type="text"
+                            name="lowerPrice"
+                            placeholder="Menor valor ofertado"
+                            className="w-full border border-gray-300 focus:scale-105 rounded-2xl placeholder:text-gray-600 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
+                            onChange={handleInputChange}
+                        />
+                        {formErrors.lowerPrice.length > 0 && <p className="text-red-500 text-sm">{formErrors.lowerPrice[0]}</p>}
+                        <input
+                            type="text"
+                            name="higherPrice"
+                            placeholder="Maior valor ofertado"
+                            className="w-full border border-gray-300 focus:scale-105 rounded-2xl placeholder:text-gray-600 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
+                            onChange={handleInputChange}
+                        />
+                        {formErrors.higherPrice.length > 0 && <p className="text-red-500 text-sm">{formErrors.higherPrice[0]}</p>} */}
                         <input
                             type="text"
                             name="about"
@@ -504,6 +522,7 @@ const EditLocal: React.FC = () => {
                         <div className="mx-auto w-3/4 ">
                             <p className="text-gray-800 mb-4 mt-4">{formValues.description || 'Uma breve descrição do estabelecimento'}</p>
                             <p className="text-green-button mb-4">{formValues.workStart && formValues.workStop ? `Horário de funcionamento: ${formValues.workStart} - ${formValues.workStop}` : 'Horário de funcionamento'}</p>
+                            <p className="">{formValues.lowerPrice && formValues.higherPrice ? `Valor dos produtos: R$ ${formValues.lowerPrice} A R$ ${formValues.higherPrice} Reais` : `Valor dos produtos`}</p>
                             <p className="text-gray-800 mb-4">{(formValues.categories || []).join(', ') || 'Categorias'}</p>
                             <p className="text-gray-800 mb-4">{formValues.about || 'Conte a história de seu estabelecimento'}</p>
                             <div className="w-full h-48 mt-2">

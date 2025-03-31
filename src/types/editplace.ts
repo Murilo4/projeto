@@ -1,7 +1,7 @@
 export type FormRegisterPlaceValues = {
     placeName: string
     description: string
-    type: string
+    type: string[]
     city: string
     state: string
     workStart: string
@@ -11,9 +11,9 @@ export type FormRegisterPlaceValues = {
     locationX: string
     locationY: string
     about: string
-    categories: string
-    photo: string
-    enterprese: string
+    categories: string[]
+    photo: string[]
+    // enterprese: string
     [key: string]: any; 
   }
 
@@ -32,7 +32,7 @@ export type FormRegisterPlaceValues = {
     about: string[]
     categories: string[]
     photo: string[]
-    enterprese: string[]
+    // enterprese: string[]
   }
 
     export type InputName = keyof FormRegisterPlaceValues

@@ -81,12 +81,48 @@ const Locais: React.FC = () => {
     fetchPlaces()
   }, [validateToken, fetchPlaces])
 
+  const handleCreatePlace = () => {
+    router.push('/criar-local')
+  }
+  const handleDeletePlace = useCallback(async (placeid: number) => {
+    setLoader(true)
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/delete-place/${placeid}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${cookies.get('access')}`,
+        },
+      })
+      if (response.ok) {
+        toast.success('Local deletado com sucesso')
+        // Atualiza a lista de locais após a exclusão
+        fetchPlaces()
+      } else {
+        toast.error('Erro ao deletar local')
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error)
+      toast.error('Erro ao deletar local. Tente novamente mais tarde.')
+    }
+    setLoader(false)
+  }, [cookies, fetchPlaces])
+
+
   return (
     <>
       <ToastContainer />
       <div className="container mx-auto p-2 relative mt-28">
         <div className="container mx-auto relative">
           <h1 className="text-2xl font-bold text-center mb-1">Gerenciamento de locais</h1>
+          <div className="text-center">
+               <button
+                 onClick={handleCreatePlace}
+                 className="bg-principal-blue text-white py-2 px-4 mb-4 rounded-md hover:bg-blue-600"
+               >
+                 Criar Novo local
+               </button>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {loader ? (
               <p>Carregando locais...</p>
@@ -122,7 +158,7 @@ const Locais: React.FC = () => {
                         <span className="text-xs">Editar</span>
                       </button>
                       <button
-                        onClick={() => toast.error('Função de exclusão não implementada')}
+                        onClick={() => handleDeletePlace(placeData.place.id)}
                         className="bg-red text-white p-2 rounded-md hover:bg-red flex flex-col items-center"
                       >
                         <FaTrash />

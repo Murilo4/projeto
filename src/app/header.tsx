@@ -5,6 +5,7 @@ import { HeaderProps } from "@/types/header";
 import { useState, useEffect } from "react";
 import { ModalState } from "@/types/modal";
 import HamburgerButton from "@/components/hamburgerButton";
+import { useRouter } from 'next/navigation'
 import Link from 'next/link';
 import Cookies from 'universal-cookie';
 
@@ -14,6 +15,7 @@ const Header: React.FC<HeaderProps> = () => {
   const [activeSection, setActiveSection] = useState<"novidades" | "minha-conta" | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [userType, setUserType] = useState<"cpf" | "cnpj" | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const cookies = new Cookies();
@@ -100,15 +102,11 @@ const Header: React.FC<HeaderProps> = () => {
                 <h2 className="text-xl mb-4 font-semibold text-center text-dark-blue">Novidades</h2>
                 <ul className="space-y-3">
                   <li>
-                    <a
-                      href="https://www.instagram.com/comtur_franca/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-800 hover:underline flex items-center text-xl"
-                    >
+                      <button
+                      onClick={ () => router.push(`search/restaurantes`)}></button>
                       <img src="/icons/restaurant.svg" alt="Restaurantes" className="w-6 h-6 mr-2" />
                       Restaurantes mais populares
-                    </a>
+                    
                   </li>
                   <li>
                     <a

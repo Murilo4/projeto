@@ -10,7 +10,7 @@ import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import { toast, ToastContainer } from 'react-toastify'
 import { useRouter, useParams } from 'next/navigation'
-
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 
 const data = {
   nome: "Restaurante Cio da Terra Grill",
@@ -46,12 +46,14 @@ interface Place {
   type: string
   workStart: string
   workStop: string
+  city: string
+  state: string
+  photos: string[]
+  categories: string[]
 }
 
 interface PlaceData {
   place: Place
-  photos: string[]
-  categories: string[]
 }
 
 const Main = () => {
@@ -63,7 +65,9 @@ const Main = () => {
   const [isFavorited, setIsFavorited] = useState<boolean>(false); // Estado para favoritar o local
   const { id } = useParams()
   const [loader, setLoader] = useState<boolean>(false)
-  const [place, setPlace] = useState<PlaceData | null>(null)
+  const [place, setPlace] = useState<Place | null>(null)
+  const [rating, setRating] = useState<number>(0); // Estado para a avaliação em estrelas
+
   const handleAddComment = () => {
     if (newComment.trim() !== "") {
       setComments([...comments, newComment.trim()]);
@@ -93,171 +97,246 @@ const Main = () => {
     slidesPerView: 1,
   };
 
-  const handleToggleFavorite = () => {
-    setIsFavorited(!isFavorited); // Altera o estado de favorito
+  const handleToggleFavorite = async () => {
+    setIsFavorited(!isFavorited);
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    
+    try {
+      const response = await fetch(`${apiUrl}/add-to-favorites/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ placeId: id }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        if (data.isOwner) {
+          toast.error('Você não pode adicionar seu próprio local aos favoritos.');
+        } else {
+          toast.success(isFavorited ? 'Local removido dos favoritos.' : 'Local adicionado aos favoritos.');
+        }
+      } else {
+        toast.error('Erro ao adicionar local aos favoritos.');
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao adicionar local aos favoritos. Tente novamente mais tarde.');
+    }
   };
 
-   const fetchPlaces = useCallback(async () => {
-      setLoader(true)
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-        const response = await fetch(`${apiUrl}/get-place/${id}/`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${cookies.get('access')}`,
-          },
-        })
-        const data = await response.json()
-        if (response.ok && data.success) {
-          setPlace(data.place)
-        } else {
-          toast.error('Erro ao carregar locais')
-        }
-      } catch (error) {
-        console.error('Erro na requisição:', error)
-        toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
+  const handleRatingChange = async (newRating: number) => {
+    setRating(newRating); // Atualiza o estado da avaliação
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    
+    try {
+      const response = await fetch(`${apiUrl}/submit-rating/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ placeId: id, rating: newRating }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        toast.success('Avaliação enviada com sucesso!');
+      } else {
+        toast.error('Erro ao enviar avaliação.');
       }
-      setLoader(false)
-    }, [cookies])
-  
-    useEffect(() => {
-        fetchPlaces()
-      }, [fetchPlaces])
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao enviar avaliação. Tente novamente mais tarde.');
+    }
+  };
+
+  const renderStars = () => {
+    const totalStars = 5;
+    const filledStars = Math.floor(rating);
+    const halfStar = rating - filledStars >= 0.5 ? 1 : 0;
+    const emptyStars = totalStars - filledStars - halfStar;
+
+    const stars = [];
+    for (let i = 0; i < filledStars; i++) {
+      stars.push(<FaStar key={`full-${i}`} className="text-yellow-500 cursor-pointer" onClick={() => handleRatingChange(i + 1)} />);
+    }
+    if (halfStar) stars.push(<FaStarHalfAlt key="half" className="text-yellow-500 cursor-pointer" onClick={() => handleRatingChange(filledStars + 0.5)} />);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<FaRegStar key={`empty-${i}`} className="text-yellow-500 cursor-pointer" onClick={() => handleRatingChange(filledStars + 1 + i)} />);
+    }
+
+    return stars;
+  };
+
+  const fetchPlaces = useCallback(async () => {
+    setLoader(true)
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/get-place/${id}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cookies.get('access')}`,
+        },
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
+        setPlace(data.place)
+        setRating(data.place.rating_number || 0); // Define a avaliação inicial
+      } else {
+        toast.error('Erro ao carregar locais')
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error)
+      toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
+    }
+    setLoader(false)
+  }, [cookies, id])
+
+  useEffect(() => {
+    fetchPlaces()
+  }, [fetchPlaces])
+
+  if (loader) {
+    return <div>Carregando...</div>; // Exibe uma mensagem de carregamento
+  }
+
+  if (!place) {
+    return <div>Nenhum local encontrado.</div>; // Mensagem caso não haja dados
+  }
+
   return (
     <>
-    <ToastContainer/>
-    <div className="p-4 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl ml-2 mb-2 font-bold">{data.nome}</h1>
-        <button
-          onClick={handleToggleFavorite}
-          className={`text-4xl ${isFavorited ? 'text-yellow-500' : 'text-gray-500'}`}
-        >
-          {isFavorited ? "★" : "★"} {/* Ícone de favorito */}
-        </button>
-      </div>
-      <div className="mt-2 text-xl mb-4">
-        <span className="text-yellow text-3xl">
-          {"★".repeat(Math.floor(data.estrelas))}{"☆".repeat(5 - Math.floor(data.estrelas))}
-        </span>
-        <span className="ml-2 text-xl ">{data.qtda_reviews} Avaliações</span>
-      </div>
-      <p className="mt-2 text-xl text-black">&#x1F4CD; {data.address}</p>
-      <Slider settings={sliderSettings}>
-        {data.imagens.map((image, i) => (
-          <SwiperSlide key={i} className="w-full h-96 object-cover rounded-md relative">
-            <img
-              src={image}
-              alt={data.nome}
-              className="w-full h-96 object-fill rounded-lg mx-2 my-2 pr-2"
-            />
-            <button
-              onClick={() => handleOpenFullscreen(i)}
-              className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white text-sm px-4 py-2 rounded-md hover:bg-opacity-75"
-            >
-              Abrir Imagem
-            </button>
-          </SwiperSlide>
-        ))}
-      </Slider>
-
-      {isFullscreen && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
-          <div className="w-full h-full max-w-4xl max-h-96 flex items-center justify-center">
-            <Slider
-              settings={{
-                ...Settings,
-                initialSlide: currentImageIndex,
-                spaceBetween: 10, // Remove espaços entre slides no fullscreen
-                slidesPerView: 1, // Um slide por vez
-              }}
-            >
-              {data.imagens.map((image, i) => (
-                <SwiperSlide key={i} className="flex justify-center items-center">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <img
-                      src={image}
-                      alt="imagem"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Slider>
-            <button
-              onClick={handleCloseFullscreen}
-              className="absolute top-2 right-4 bg-white text-black text-lg px-4 py-2 rounded-md hover:bg-gray-200"
-            >
-              Fechar
-            </button>
-          </div>
+      <ToastContainer />
+      <div className="p-4 max-w-4xl mx-auto">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl ml-2 mb-2 font-bold">{place?.placeName}</h1>
+          <button
+            onClick={handleToggleFavorite}
+            className={`text-4xl ${isFavorited ? 'text-yellow-500' : 'text-gray-500'}`}
+          >
+            {isFavorited ? "★" : "★"}
+          </button>
         </div>
-      )}
-      {/* Avaliações */}
-      <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Sobre</h2>
-        <p className="text-lg text-gray-800 mb-4">{data.sobre}</p>
+        <div className="mt-2 text-xl mb-4">
+          <div className="flex space-x-1">
+            {renderStars()}
+          </div>
+          <span className="ml-2 text-xl ">{place?.rating_number} Avaliações</span>
+        </div>
+        <p className="mt-2 text-xl text-black">&#x1F4CD; {place?.city}, {place?.state}</p>
+        <Slider settings={sliderSettings}>
+          {place.photos.map((image, i) => (
+            <SwiperSlide key={i} className="w-full h-96 object-cover rounded-md relative">
+              <img
+                src={`http://localhost:8000${image}`}
+                alt={data.nome}
+                className="w-full h-96 object-fill rounded-lg mx-2 my-2 pr-2"
+              />
+              <button
+                onClick={() => handleOpenFullscreen(i)}
+                className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white text-sm px-4 py-2 rounded-md hover:bg-opacity-75"
+              >
+                Abrir Imagem
+              </button>
+            </SwiperSlide>
+          ))}
+        </Slider>
 
-        <hr className="my-4" />
+        {isFullscreen && (
+          <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
+            <div className="w-full h-full max-w-4xl max-h-96 flex items-center justify-center">
+              <Slider
+                settings={{
+                  ...Settings,
+                  initialSlide: currentImageIndex,
+                  spaceBetween: 10, // Remove espaços entre slides no fullscreen
+                  slidesPerView: 1, // Um slide por vez
+                }}
+              >
+                {place.photos.map((image, i) => (
+                  <SwiperSlide key={i} className="flex justify-center items-center">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <img
+                        src={`http://localhost:8000${image}`}
+                        alt="imagem"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Slider>
+              <button
+                onClick={handleCloseFullscreen}
+                className="absolute top-2 right-4 bg-white text-black text-lg px-4 py-2 rounded-md hover:bg-gray-200"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        )}
 
-        <p className="text-lg">
-          <strong>Descrição:</strong> {data.descrição}
-        </p>
+        {/* Avaliações */}
+        <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold mb-4">Sobre</h2>
+          <p className="text-lg text-gray-800 mb-4">{place?.about}</p>
 
-        <hr className="my-4" />
+          <hr className="my-4" />
 
-        <p className="text-lg">
-          <strong>Horário de funcionamento:</strong> {data.horario}
-        </p>
+          <p className="text-lg">
+            <strong>Descrição:</strong> {place?.description}
+          </p>
 
-        <hr className="my-4" />
+          <hr className="my-4" />
 
-        <p className="text-lg">
-          <strong>Categorias:</strong> {data.categorias.join(", ")}
-        </p>
+          <p className="text-lg text-green-button">
+            <strong>Horário de funcionamento:</strong> {place?.workStart} até {place?.workStop}
+          </p>
 
-        <hr className="my-4" />
+          <hr className="my-4" />
 
-        <ul className="mt-4 space-y-2">
-          <li>
-            <strong>Idiomas falados:</strong> Português, Inglês
-          </li>
-        </ul>
+          <p className="text-lg">
+            <strong>Categorias:</strong> {place?.categories.join(", ")}
+          </p>
+          <hr className="my-4" />
+        </div>
+
+        {/* Adicionar Comentário */}
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold">Adicionar Comentário</h3>
+          <textarea
+            className="w-full border rounded-md p-2 mt-2 h-24"
+            placeholder="Escreva seu comentário aqui..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+          <button
+            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            onClick={handleAddComment}
+          >
+            Enviar Comentário
+          </button>
+        </div>
+
+        {/* Comentários */}
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold">Comentários</h2>
+          <ul className="mt-4 space-y-3">
+            {comments.length > 0 ? (
+              comments.map((comment, index) => (
+                <li key={index} className="bg-gray-100 p-3 rounded-md shadow-sm">
+                  {comment}
+                </li>
+              ))
+            ) : (
+              <li className="text-gray-500">Nenhum comentário ainda. Seja o primeiro a comentar!</li>
+            )}
+          </ul>
+        </div>
       </div>
-
-      {/* Adicionar Comentário */}
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold">Adicionar Comentário</h3>
-        <textarea
-          className="w-full border rounded-md p-2 mt-2 h-24"
-          placeholder="Escreva seu comentário aqui..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        />
-        <button
-          className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          onClick={handleAddComment}
-        >
-          Enviar Comentário
-        </button>
-      </div>
-
-      {/* Comentários */}
-      <div className="mt-4">
-        <h2 className="text-xl font-semibold">Comentários</h2>
-        <ul className="mt-4 space-y-3">
-          {comments.length > 0 ? (
-            comments.map((comment, index) => (
-              <li key={index} className="bg-gray-100 p-3 rounded-md shadow-sm">
-                {comment}
-              </li>
-            ))
-          ) : (
-            <li className="text-gray-500">Nenhum comentário ainda. Seja o primeiro a comentar!</li>
-          )}
-        </ul>
-      </div>
-    </div>
     </>
   );
 };

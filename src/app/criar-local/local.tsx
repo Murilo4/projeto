@@ -120,29 +120,38 @@ const CreateLocal: React.FC = () => {
     fetchTypesData()
   }, [fetchCategoriesData, fetchTypesData])
 
-  const handleInputChange = (place: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = place.target
-    if (type === 'checkbox' && name === 'categories') {
-      setFormValues((prevValues) => ({
-        ...prevValues,
-        categories: checked
-          ? [...prevValues.categories.split(',').filter(Boolean), value].join(',')
-          : prevValues.categories.split(',').filter((cat) => cat !== value).join(',')
-      }))
-    } else if (type === 'checkbox' && name === 'tipos') {
-      setFormValues((prevValues) => ({
-        ...prevValues,
-        type: checked
-          ? [...prevValues.type.split(',').filter(Boolean), value].join(',')
-          : prevValues.type.split(',').filter((type) => type !== value).join(',')
-      }))
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = event.target;
+
+    if (type === 'checkbox') {
+      if (name === 'categories') {
+        setFormValues((prevValues) => {
+          const currentCategories = prevValues.categories.split(',').filter(Boolean);
+          return {
+            ...prevValues,
+            categories: checked
+              ? [...currentCategories, value].join(',')
+              : currentCategories.filter((cat) => cat !== value).join(',')
+          };
+        });
+      } else if (name === 'tipos') {
+        setFormValues((prevValues) => {
+          const currentTypes = prevValues.type.split(',').filter(Boolean);
+          return {
+            ...prevValues,
+            type: checked
+              ? [...currentTypes, value].join(',')
+              : currentTypes.filter((type) => type !== value).join(',')
+          };
+        });
+      }
     } else {
       setFormValues((prevValues) => ({
         ...prevValues,
         [name]: value,
-      }))
+      }));
     }
-  }
+  };
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -153,73 +162,86 @@ const CreateLocal: React.FC = () => {
     }
   }
 
-  async function handleFormSubmit(place: React.FormEvent<HTMLFormElement>) {
-    place.preventDefault()
-    setLoader(true)
+  async function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoader(true);
 
-    const validation = registerPlace.safeParse(formValues)
+    const validation = registerPlace.safeParse(formValues);
 
     if (!validation.success) {
-      console.log('Validation errors:', validation.error.formErrors.fieldErrors)
+      console.log('Validation errors:', validation.error.formErrors.fieldErrors);
       setFormErrors({
         ...initialErrors,
         ...validation.error.formErrors.fieldErrors,
-      })
+      });
       Object.values(validation.error.formErrors.fieldErrors).forEach((errorArray) => {
         errorArray.forEach((error) => {
-          toast.error(error)
-        })
-      })
-      return
+          toast.error(error);
+        });
+      });
+      setLoader(false);
+      return;
     }
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
-      // Prepare categories as an array of objects with id and category
-      const selectedCategories = formValues.categories.split(',').filter(Boolean)
-      const categoryObjects = selectedCategories.map((category) => {
-        const categoryData = categoriesData.find((cat) => cat.category === category)
-        return categoryData ? { id: categoryData.id, category: categoryData.category } : null
-      }).filter(Boolean)
+      // Prepare the FormData
+      const formData = new FormData();
+      formData.append('placeName', formValues.placeName);
+      formData.append('description', formValues.description);
+      formData.append('city', formValues.city);
+      formData.append('state', formValues.state);
+      formData.append('workStart', formValues.workStart);
+      formData.append('workStop', formValues.workStop);
+      formData.append('about', formValues.about);
 
-      // Prepare the payload as JSON
-      const payload = {
-        ...formValues,
-        categories: categoryObjects,
-        photos: photos.map((photo) => photo.name), // Assuming backend handles file uploads separately
-      }
+      // Adiciona categorias como um array
+      const selectedCategories = formValues.categories.split(',').filter(Boolean);
+      selectedCategories.forEach((category) => {
+        formData.append('categories[]', category); // Envia como array
+      });
 
+      // Adiciona tipos como um array
+      const selectedTypes = formValues.type.split(',').filter(Boolean);
+      selectedTypes.forEach((type) => {
+        formData.append('tipos[]', type); // Envia como array
+      });
+
+      // Adiciona fotos
+      photos.forEach((photo) => {
+        formData.append('photos', photo);
+      });
+      console.log(formData)
       const response = await fetch(`${apiUrl}/create-place/`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${cookies.get('access')}`,
         },
-        body: JSON.stringify(payload),
-      })
+        body: formData, // Envia o FormData
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.status === 429) {
-        toast.error('Muitas requisições. Tente novamente mais tarde.')
-        setLoader(false)
-        return
+        toast.error('Muitas requisições. Tente novamente mais tarde.');
+        setLoader(false);
+        return;
       }
 
       if (data.success) {
-        toast.success(data.message)
-        router.push('/meus-locais')
+        toast.success(data.message);
+        router.push(`/criar-endereco-local/${data.placeId}`);
       } else {
-        console.log('API error:', data.message, data.errors)
-        toast.warning(data.message)
+        console.log('API error:', data.message, data.errors);
+        toast.warning(data.message);
       }
     } catch (error) {
-      console.error('API request error:', error)
-      toast.error('Erro ao enviar a requisição. Tente novamente mais tarde.')
+      console.error('API request error:', error);
+      toast.error('Erro ao enviar a requisição. Tente novamente mais tarde.');
     }
 
-    setLoader(false)
+    setLoader(false);
   }
 
   const handlebuttonBackClick = () => {
