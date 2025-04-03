@@ -1,5 +1,5 @@
 import { Footer } from '@/app/footer'
-import CreateAddressLocal from './endereco-local'
+import CreateAddressLocal from './editar-endereco'
 export default function Login() {
   return (
     <>

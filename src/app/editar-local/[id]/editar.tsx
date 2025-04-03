@@ -4,7 +4,7 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast, ToastContainer } from 'react-toastify'
 import { FormRegisterPlaceErrors, FormRegisterPlaceValues } from '@/types/editplace'
-import registerPlace from '@/schemas/registerPlace'
+import editPlace from '@/schemas/editPlace'
 import 'react-toastify/dist/ReactToastify.css'
 import Cookies from 'universal-cookie'
 import Carousel from 'react-multi-carousel'
@@ -28,10 +28,12 @@ const initialValues: FormRegisterPlaceValues = {
     city: '',
     state: '',
     type: [],
-    locationX: '',
-    locationY: '',
+    // locationX: '',
+    // locationY: '',
     workStart: '',
     workStop: '',
+    lowerPrice: '',
+    higherPrice: '',
     about: '',
     categories: [],
     // enterprese: '',
@@ -44,10 +46,12 @@ const initialErrors: FormRegisterPlaceErrors = {
     city: [],
     state: [],
     type: [],
-    locationX: [],
-    locationY: [],
+    // locationX: [],
+    // locationY: [],
     workStart: [],
     workStop: [],
+    lowerPrice: [],
+    higherPrice: [],
     about: [],
     categories: [],
     // enterprese: [],
@@ -90,15 +94,17 @@ const EditLocal: React.FC = () => {
                     state: data.place.state || '',  // Adicionando valor default
                     categories: data.place.categories || [], // Garantindo que seja um array
                     type: data.place.type || [], // Garantindo que seja um array
-                    locationX: data.place.locationX || null,  // Valor padrão para locationX
-                    locationY: data.place.locationY || null,  // Valor padrão para locationY
+                    // locationX: data.place.locationX || null,  // Valor padrão para locationX
+                    // locationY: data.place.locationY || null,  // Valor padrão para locationY
                     photo: data.place.photos || [],  // Garantindo que seja um array de fotos (pode estar vazio)
+                    lowerPrice: data.place.lowerPrice || null,
+                    higherPrice: data.place.higherPrice || null,
                     enterprise: data.place.enterprise || '',
                 }
-    
+
                 setFormValues(fetchedValues)  // Preenche os valores do formulário
                 setOriginalValues(fetchedValues)  // Armazena os valores originais
-              
+
                 // Configura as pré-visualizações das fotos
                 const backendPhotoUrls = data.place.photos.map((photo: string) => `http://localhost:8000${photo}`)
                 setPhotoPreviews(backendPhotoUrls)  // Preenche as pré-visualizações das fotos
@@ -206,7 +212,7 @@ const EditLocal: React.FC = () => {
         place.preventDefault()
         setLoader(true)
 
-        const validation = registerPlace.safeParse(formValues)
+        const validation = editPlace.safeParse(formValues)
 
         if (!validation.success) {
             console.log('Validation errors:', validation.error.formErrors.fieldErrors)
@@ -239,14 +245,14 @@ const EditLocal: React.FC = () => {
             formData.append('city', formValues.city)
             formData.append('state', formValues.state)
             formData.append('type', JSON.stringify(formValues.type))
-            formData.append('locationX', formValues.locationX)
-            formData.append('locationY', formValues.locationY)
             formData.append('workStart', formValues.workStart)
             formData.append('workStop', formValues.workStop)
             formData.append('about', formValues.about)
             formData.append('lowerPrice', formValues.lowerPrice)
             formData.append('higherPrice', formValues.higherPrice)
             formData.append('categories', JSON.stringify(categoryObjects))
+            formData.append('lowerPrice', formValues.lowerPrice)
+            formData.append('higherPrice', formValues.higherPrice)
 
             photos.forEach((photo) => {
                 formData.append('photos', photo)
@@ -337,12 +343,13 @@ const EditLocal: React.FC = () => {
                         />
                         {formErrors.workStop.length > 0 && <p className="text-red-500 text-sm">{formErrors.workStop[0]}</p>}
 
-                        {/* <input
+                        <input
                             type="text"
                             name="lowerPrice"
                             placeholder="Menor valor ofertado"
                             className="w-full border border-gray-300 focus:scale-105 rounded-2xl placeholder:text-gray-600 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
                             onChange={handleInputChange}
+                            value={formValues.lowerPrice}
                         />
                         {formErrors.lowerPrice.length > 0 && <p className="text-red-500 text-sm">{formErrors.lowerPrice[0]}</p>}
                         <input
@@ -351,8 +358,9 @@ const EditLocal: React.FC = () => {
                             placeholder="Maior valor ofertado"
                             className="w-full border border-gray-300 focus:scale-105 rounded-2xl placeholder:text-gray-600 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
                             onChange={handleInputChange}
+                            value={formValues.higherPrice}
                         />
-                        {formErrors.higherPrice.length > 0 && <p className="text-red-500 text-sm">{formErrors.higherPrice[0]}</p>} */}
+                        {formErrors.higherPrice.length > 0 && <p className="text-red-500 text-sm">{formErrors.higherPrice[0]}</p>}
                         <input
                             type="text"
                             name="about"

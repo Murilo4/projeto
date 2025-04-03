@@ -152,24 +152,31 @@ const Locais: React.FC = () => {
                     <div className="grid grid-cols-2 gap-2 w-full">
                       <button
                         onClick={() => router.push(`/editar-local/${placeData.place.id}`)}
-                        className="bg-blue text-white p-2 rounded-md hover:bg-blue flex flex-col items-center"
+                        className="bg-blue text-white p-2 rounded-md hover:bg-dark-blue flex flex-col shadow-md shadow-slate-400  items-center hover:scale-105"
                       >
                         <FaEdit />
                         <span className="text-xs">Editar</span>
                       </button>
                       <button
-                        onClick={() => handleDeletePlace(placeData.place.id)}
-                        className="bg-red text-white p-2 rounded-md hover:bg-red flex flex-col items-center"
+                        onClick={() => router.push(`/editar-endereco-local/${placeData.place.id}`)}
+                        className="bg-blue-thirth text-white p-2 rounded-md hover:bg-dark-blue flex flex-col shadow-md shadow-slate-400 items-center w-full hover:scale-105"
                       >
-                        <FaTrash />
-                        <span className="text-xs">Excluir</span>
+                        <FaEdit />
+                        <span className="text-xs">Editar endereço</span>
                       </button>
                       <button
                         onClick={() => router.push(`/main-page/${placeData.place.id}?${placeData.place.placeName}`)}
-                        className="bg-green text-white p-2 rounded-md hover: flex flex-col items-center w-full"
+                        className="bg-green text-white p-2 rounded-md hover:bg-green-button flex flex-col shadow-md shadow-slate-400  items-center w-full hover:scale-105"
                       >
                         <FaEye />
                         <span className="text-xs">Acessar</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeletePlace(placeData.place.id)}
+                        className="bg-red text-white p-2 rounded-md hover:bg-rose-800 flex flex-col shadow-md shadow-slate-400 items-center hover:scale-105"
+                      >
+                        <FaTrash />
+                        <span className="text-xs">Excluir</span>
                       </button>
                     </div>
                   </div>

@@ -5,6 +5,7 @@ import Cookies from 'universal-cookie'
 import Slider from '@/components/Slider'; // Componente Slider fornecido
 import { SwiperSlide } from 'swiper/react';
 import { SwiperProps } from "swiper/react";
+import { Router } from "next/router";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
@@ -69,17 +70,32 @@ const Main = () => {
   const [isFavorited, setIsFavorited] = useState<boolean>(false); // Estado para favoritar o local
   const { id } = useParams()
   const [loader, setLoader] = useState<boolean>(false)
+  const router = useRouter()
   const [place, setPlace] = useState<Place | null>(null)
   const [rating, setRating] = useState<number>(0); // Estado para a avaliação em estrelas
 
-  const handleAddComment = () => {
-    if (newComment.trim() !== "") {
-      setComments([...comments, newComment.trim()]);
-      setNewComment("");
-    } else {
-      alert("Por favor, escreva um comentário antes de enviar.");
-    }
-  };
+  const handleAddComment = useCallback(async () => {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+      const token = cookies.get('access');
+      try {
+        const response = await fetch(`${apiUrl}/send-comment/${id}/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+  
+        const data = await response.json();
+        if (response.ok && data.success) {
+          router.push(`/main-page/${id}`)
+      }}
+      catch (error) {
+        console.error('Erro na requisição:', error);
+        toast.error('Erro ao adicionar o comentario. Tente novamente mais tarde.');
+      }
+    }, [cookies, id])
+  
+    
   
   const handleFavorite = useCallback(async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
@@ -339,7 +355,7 @@ const Main = () => {
             onChange={(e) => setNewComment(e.target.value)}
           />
           <button
-            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            className="mt-2 bg-blue text-white px-4 py-2 rounded-md hover:bg-blue"
             onClick={handleAddComment}
           >
             Enviar Comentário

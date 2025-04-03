@@ -46,6 +46,8 @@ const initialValues: FormRegisterPlaceValues = {
   locationY: '',
   workStart: '',
   workStop: '',
+  lowerPrice: '',
+  higherPrice: '',
   about: '',
   categories: '',
   enterprese: '',
@@ -62,6 +64,8 @@ const initialErrors: FormRegisterPlaceErrors = {
   locationY: [],
   workStart: [],
   workStop: [],
+  lowerPrice: [],
+  higherPrice: [],
   about: [],
   categories: [],
   enterprese: [],
@@ -107,7 +111,6 @@ const CreateLocal: React.FC = () => {
       })
       const data = await response.json()
       if (data.success) {
-        console.log(data.tipos)
         setTypeData(data.tipos)
       }
     } catch (error) {
@@ -195,6 +198,8 @@ const CreateLocal: React.FC = () => {
       formData.append('workStart', formValues.workStart);
       formData.append('workStop', formValues.workStop);
       formData.append('about', formValues.about);
+      formData.append('lowerPrice', formValues.lowerPrice)
+      formData.append('higherPrice', formValues.higherPrice)
 
       // Adiciona categorias como um array
       const selectedCategories = formValues.categories.split(',').filter(Boolean);
@@ -294,6 +299,22 @@ const CreateLocal: React.FC = () => {
             />
             {formErrors.workStop.length > 0 && <p className="text-red-500 text-sm">{formErrors.workStop[0]}</p>}
 
+            <input
+              type="text"
+              name="lowerPrice"
+              placeholder="Menor valor oferecido"
+              className="w-full border border-gray-300 focus:scale-105 rounded-2xl placeholder:text-gray-600 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
+              onChange={handleInputChange}
+            />
+            {formErrors.lowerPrice.length > 0 && <p className="text-red-500 text-sm">{formErrors.lowerPrice[0]}</p>}
+            <input
+              type="text"
+              name="higherPrice"
+              placeholder="maior valor oferecido"
+              className="w-full border border-gray-300 focus:scale-105 rounded-2xl placeholder:text-gray-600 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
+              onChange={handleInputChange}
+            />
+            {formErrors.higherPrice.length > 0 && <p className="text-red-500 text-sm">{formErrors.higherPrice[0]}</p>}
             <input
               type="text"
               name="about"
@@ -445,6 +466,7 @@ const CreateLocal: React.FC = () => {
               <p className="text-gray-800 mb-4 mt-4">{formValues.description || 'Uma breve descrição do estabelecimento'}</p>
               <p className="text-green-button mb-4">{formValues.workStart && formValues.workStop ? `Horário de funcionamento: ${formValues.workStart} - ${formValues.workStop}` : 'Horário de funcionamento'}</p>
               <p className="text-gray-800 mb-4">{formValues.categories.split(',').filter(Boolean).join(', ') || 'Categorias'}</p>
+              <p> {formValues.lowerPrice && formValues.higherPrice ? `valores oferecidos: ${formValues.lowerPrice} - ${formValues.higherPrice}`: 'valores oferecidos'}</p>
               <p className="text-gray-800 mb-4">{formValues.about || 'Conte a história de seu estabelecimento'}</p>
               <div className="w-full h-48 mt-2">
                 <img src="/maps.jpg" alt="Map placeholder" className="w-full h-full object-cover rounded-lg" />

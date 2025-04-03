@@ -6,8 +6,8 @@ export type FormRegisterPlaceValues = {
     state: string
     workStart: string
     workStop: string
-    //lowerPrice: string
-    //higherPrice: string
+    lowerPrice: string
+    higherPrice: string
     locationX: string
     locationY: string
     about: string
@@ -25,8 +25,8 @@ export type FormRegisterPlaceValues = {
     state: string[]
     workStart: string[]
     workStop: string[]
-    //lowerPrice: string[]
-    //higherPrice: string[]
+    lowerPrice: string[]
+    higherPrice: string[]
     locationX: string[]
     locationY: string[]
     about: string[]
