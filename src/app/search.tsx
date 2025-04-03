@@ -131,11 +131,11 @@ const Search = () => {
     setCities([]);
     setStates([]);
     if (type === 'place') {
-      router.push(`/main-page?search=${encodeURIComponent(suggestion.name)}`);
+      router.push(`/main-page/${encodeURIComponent(suggestion.id)}`);
     } else if (type === 'city') {
-      router.push(`/cities?search=${encodeURIComponent(suggestion.name)}`);
+      router.push(`/cities/${encodeURIComponent(suggestion.id)}`);
     } else if (type === 'state') {
-      router.push(`/states?search=${encodeURIComponent(suggestion.name)}`);
+      router.push(`/states/${encodeURIComponent(suggestion.id)}`);
     }
   };
 

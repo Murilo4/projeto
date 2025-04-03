@@ -48,6 +48,10 @@ interface Place {
   workStop: string
   city: string
   state: string
+  street: string
+  neighborhood: string 
+  number: string
+  cep: string
   photos: string[]
   categories: string[]
 }
@@ -76,6 +80,28 @@ const Main = () => {
       alert("Por favor, escreva um comentário antes de enviar.");
     }
   };
+  
+  const handleFavorite = useCallback(async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    try {
+      const response = await fetch(`${apiUrl}/get-favorite/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        if (data.favorite == true) {
+          setIsFavorited(true)  }}
+    }
+    catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao adicionar local aos favoritos. Tente novamente mais tarde.');
+    }
+  }, [cookies, id])
 
   const handleOpenFullscreen = (index: number) => {
     setCurrentImageIndex(index);
@@ -101,14 +127,12 @@ const Main = () => {
     setIsFavorited(!isFavorited);
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
     const token = cookies.get('access');
-    
     try {
-      const response = await fetch(`${apiUrl}/add-to-favorites/${id}/`, {
+      const response = await fetch(`${apiUrl}/set-favorite/${id}/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ placeId: id }),
       });
 
       const data = await response.json();
@@ -134,7 +158,7 @@ const Main = () => {
     const token = cookies.get('access');
     
     try {
-      const response = await fetch(`${apiUrl}/submit-rating/${id}/`, {
+      const response = await fetch(`${apiUrl}/create-rating/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -198,7 +222,8 @@ const Main = () => {
 
   useEffect(() => {
     fetchPlaces()
-  }, [fetchPlaces])
+    handleFavorite()
+  }, [fetchPlaces, handleFavorite])
 
   if (loader) {
     return <div>Carregando...</div>; // Exibe uma mensagem de carregamento
@@ -211,7 +236,7 @@ const Main = () => {
   return (
     <>
       <ToastContainer />
-      <div className="p-4 max-w-4xl mx-auto">
+      <div className="p-4 max-w-4xl mx-auto mt-20">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl ml-2 mb-2 font-bold">{place?.placeName}</h1>
           <button
@@ -227,7 +252,7 @@ const Main = () => {
           </div>
           <span className="ml-2 text-xl ">{place?.rating_number} Avaliações</span>
         </div>
-        <p className="mt-2 text-xl text-black">&#x1F4CD; {place?.city}, {place?.state}</p>
+        <p className="mt-2 text-xl text-black">&#x1F4CD; {place?.street}, {place?.number}. {place?.neighborhood}, {place?.city}, {place?.state}</p>
         <Slider settings={sliderSettings}>
           {place.photos.map((image, i) => (
             <SwiperSlide key={i} className="w-full h-96 object-cover rounded-md relative">

@@ -1,6 +1,6 @@
 
 import Header from '@/app/header'
-import { Footer } from "../footer";
+import { Footer } from "@/app/footer";
 import ResultsCitys from './cities';
 
 export default function Home() {

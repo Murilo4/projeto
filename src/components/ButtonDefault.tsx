@@ -9,7 +9,7 @@ export const ButtonDefault: ButtonType = ({
   shadow,
   radius = 'rounded-2xl',
   paddingx = 'px-4', // Ajuste para aumentar o padding
-  paddingy = 'py-2', // Ajuste para aumentar o padding
+  paddingy = 'py-1', // Ajuste para aumentar o padding
   tailwind,
   submit = false,
   disabled = false,

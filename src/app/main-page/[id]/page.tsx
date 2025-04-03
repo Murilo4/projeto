@@ -4,9 +4,11 @@ import Main from "./main-item";
 
 export default function searchPlaces () {
     return (
-        <div className="min-h-screen bg-white-background mt-32">
+        <div className="min-h-screen flex flex-col">
             <Header />
+            <div className="flex-grow">
             <Main />
+            </div>
             <Footer />
         </div>
     )

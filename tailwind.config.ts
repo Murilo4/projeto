@@ -23,7 +23,7 @@ module.exports = {
         'yellow': '#FFCC00',
         'blue': '#00B4DD',
         'red': '#FF4949',
-        'background': '#f5f5f5',
+        'background': '#e5e5e5',
         'blue-test': '#dff0fe',
       },
       spacing: {                   // Configurações de espaçamento

@@ -4,7 +4,7 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { toast, ToastContainer } from 'react-toastify'
 import { FormRegisterAddressErrors, FormRegisterAddressValues } from '@/types/addressPlace'
-import registerPlace from '@/schemas/registerPlace'
+import addressSchema from '@/schemas/registerAddressPlace'
 import 'react-toastify/dist/ReactToastify.css'
 import Cookies from 'universal-cookie'
 import Carousel from 'react-multi-carousel'
@@ -12,7 +12,7 @@ import 'react-multi-carousel/lib/styles.css'
 
 const initialValues: FormRegisterAddressValues = {
     addressName: '',
-    postal: '',
+    cep: '',
     street: '',
     city: '',
     state: '',
@@ -22,7 +22,7 @@ const initialValues: FormRegisterAddressValues = {
 
 const initialErrors: FormRegisterAddressErrors = {
     addressName: [],
-    postal: [],
+    cep: [],
     street: [],
     city: [],
     state: [],
@@ -97,7 +97,7 @@ const CreateAddressLocal: React.FC = () => {
                     neighborhood: data.bairro || prev.neighborhood,
                     city: data.localidade || prev.city,
                     state: data.estado || prev.state,
-                    postal: data.cep || prev.postal,
+                    cep: data.cep || prev.cep,
                 }));
             } else {
                 toast.error('CEP não encontrado.');
@@ -112,7 +112,7 @@ const CreateAddressLocal: React.FC = () => {
         event.preventDefault()
         setLoader(true)
 
-        const validation = registerPlace.safeParse(formValues)
+        const validation = addressSchema.safeParse(formValues)
 
         if (!validation.success) {
             console.log('Validation errors:', validation.error.formErrors.fieldErrors)
@@ -130,15 +130,19 @@ const CreateAddressLocal: React.FC = () => {
         }
 
         try {
+            const requestData = {
+                ...formValues,
+                placeId: placeId, // Aqui você está incluindo o placeId no corpo da requisição
+            }
             const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
 
-            const response = await fetch(`${apiUrl}/create-address/`, {
+            const response = await fetch(`${apiUrl}/create-address-place/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${cookies.get('access')}`,
                 },
-                body: JSON.stringify(formValues),
+                body: JSON.stringify(requestData)
             })
 
             const data = await response.json()
@@ -151,7 +155,7 @@ const CreateAddressLocal: React.FC = () => {
 
             if (data.success) {
                 toast.success(data.message)
-                router.push(`/criar-endereco-local/${data.placeId}`)
+                router.push(`/meus-locais`)
             } else {
                 console.log('API error:', data.message, data.errors)
                 toast.warning(data.message)
@@ -192,14 +196,14 @@ const CreateAddressLocal: React.FC = () => {
 
                         <input
                             type="text"
-                            name="postal"
+                            name="cep"
                             placeholder="CEP do endereço"
                             className="w-full border border-gray-300 focus:scale-105 rounded-2xl placeholder:text-gray-600 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
                             onChange={handleInputChange}
                             onBlur={(e) => handleCepLookup(e.target.value)}
-                            value={formValues.postal}
+                            value={formValues.cep}
                         />
-                        {formErrors.postal.length > 0 && <p className="text-red-500 text-sm">{formErrors.postal[0]}</p>}
+                        {formErrors.cep.length > 0 && <p className="text-red-500 text-sm">{formErrors.cep[0]}</p>}
 
                         <input
                             type="text"

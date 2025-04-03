@@ -5,9 +5,11 @@ import Help from './help'
 export default function Home() {
   return (
     <>
-      <div className="bg-background min-h-screen">
+      <div className="min-h-screen flex flex-col">
         <Header />
+        <div className="flex-grow">
         <Help/>
+        </div>
         <Footer/>
       </div>
     </>

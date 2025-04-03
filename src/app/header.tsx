@@ -78,11 +78,10 @@ const Header: React.FC<HeaderProps> = () => {
   return (
     <header className="bg-background max-h-32 shadow-md fixed top-0 w-full z-50">
       <div className="mx-auto max-w-7xl px-4 pt-1 flex items-center justify-between bg-background">
-        <Link href="/" passHref>
-          <img src="/novo_Logo.jpg" width={135} height={100} alt="logo"
-          className="bg-background object-cover max-h-32 max-w-48" />
+        <Link href="/" passHref className="bg-background">
+          <img src="/novo_Logo.jpg" width={95} height={30} alt="logo"
+          className="bg-background object-cover max-h-32 pb-1 max-w-48" />
         </Link>
-
         <nav className="hidden lg:flex items-center flex-grow justify-center space-x-8">
           <div className="relative">
             <ButtonDefault
@@ -103,21 +102,18 @@ const Header: React.FC<HeaderProps> = () => {
                 <ul className="space-y-3">
                   <li>
                       <button
-                      onClick={ () => router.push(`search/restaurantes`)}></button>
+                      onClick={ () => router.push(`results?search=restaurantes`)}>
                       <img src="/icons/restaurant.svg" alt="Restaurantes" className="w-6 h-6 mr-2" />
                       Restaurantes mais populares
+                      </button>
                     
                   </li>
                   <li>
-                    <a
-                      href="https://www.instagram.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-800 hover:underline flex items-center text-xl"
-                    >
-                      <img src="/icons/hotel.svg" alt="Hotéis" className="w-6 h-6 mr-2" />
+                    <button
+                      onClick={ () => router.push(`results?search=hoteis`)}>
+                      <img src="/icons/hotel.svg" alt="Restaurantes" className="w-6 h-6 mr-2" />
                       Hotéis mais procurados
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </div>

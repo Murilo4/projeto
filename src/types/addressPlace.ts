@@ -1,6 +1,6 @@
 export type FormRegisterAddressValues = {
     addressName: string
-    postal: string
+    cep: string
     street: string
     city: string
     state: string
@@ -10,7 +10,7 @@ export type FormRegisterAddressValues = {
 
   export type FormRegisterAddressErrors = {
     addressName: string[]
-    postal: string[]
+    cep: string[]
     street: string[]
     city: string[]
     state: string[]
