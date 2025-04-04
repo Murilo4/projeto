@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Cookies from 'universal-cookie'
 
 const ChangePassword: React.FC = () => {
   const [phone, setPhone] = useState('');
@@ -64,7 +63,7 @@ const ChangePassword: React.FC = () => {
       toast.error('Erro ao realizar login. Tente novamente mais tarde.');
     }
   };
-  return (
+  return (<>
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <ToastContainer />
         <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-530px">
@@ -105,6 +104,7 @@ const ChangePassword: React.FC = () => {
                 </form>
         </div>
     </div>
+    </>
   );
 };
 

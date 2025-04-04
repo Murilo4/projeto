@@ -14,10 +14,10 @@ export const Footer = () => {
   const closeModal2 = () => setIsModalOpen2(false);
 
   return (
-    <section className="flex flex-col items-center justify-center bg-white-secundary space-y-4">
+    <section className="flex flex-col items-center justify-center bg-background">
       {/* Seção de Quem Somos e Contato */}
-      <div className="w-full flex justify-center mt-10">
-        <p className="text-center font-medium">Quem somos <br /> Contatos:</p>
+      <div className="w-full flex justify-center mt-2">
+        <p className="text-center font-medium">Contatos:</p>
       </div>
       {/* Botões das Modais */}
       <div className="w-full flex justify-center space-x-4">
@@ -147,9 +147,9 @@ export const Footer = () => {
       )}
 
       {/* Rodapé */}
-      <div className="text-center">
+      <div className="text-center bg-background">
         <p className="text-black">2024 Todos os direitos reservados</p>
-        <div className="flex justify-center mt-5">
+        <div className="flex justify-center mt-2">
           <a href="/termos-de-uso" target="_blank" className="hover:underline mr-7">
             Termos de uso
           </a>

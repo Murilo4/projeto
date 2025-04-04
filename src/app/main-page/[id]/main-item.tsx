@@ -41,24 +41,31 @@ interface Place {
   about: string
   description: string
   enterprise: number
-  locationX: string
-  locationY: string
-  rating_number: number | null
+  rating: number | null
   type: string
   workStart: string
   workStop: string
+  photos: string[]
+}
+
+interface PlaceList {
+  categories: string[]
+  comments: string[]
+}
+ 
+interface PlaceAddress {
+  street: string
+  number: string
+  neighborhood: string
   city: string
   state: string
-  street: string
-  neighborhood: string 
-  number: string
   cep: string
-  photos: string[]
-  categories: string[]
 }
 
 interface PlaceData {
   place: Place
+  placeList: PlaceList
+  placeAddress: PlaceAddress
 }
 
 const Main = () => {
@@ -67,22 +74,31 @@ const Main = () => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const cookies = useMemo(() => new Cookies(), [])
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  const [isFavorited, setIsFavorited] = useState<boolean>(false); // Estado para favoritar o local
+  const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const { id } = useParams()
   const [loader, setLoader] = useState<boolean>(false)
   const router = useRouter()
-  const [place, setPlace] = useState<Place | null>(null)
-  const [rating, setRating] = useState<number>(0); // Estado para a avaliação em estrelas
+  const [placeBase, setPlaceBase] = useState<Place | null>(null)
+  const [placeList, setPlaceList] = useState<PlaceList | null>(null)
+  const [placeAddress, setPlaceAddress] = useState<PlaceAddress | null>(null)
+  const [rating, setRating] = useState<number>(0); 
+  const [haveRating, setHaveRating] = useState<boolean>(false);
 
-  const handleAddComment = useCallback(async () => {
+  const handleAddComment = useCallback(async (newComment: string) => {
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
       const token = cookies.get('access');
       try {
+        const requestData = {
+          comment: newComment
+        }
+        console.log(requestData)
         const response = await fetch(`${apiUrl}/send-comment/${id}/`, {
           method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
+          body: JSON.stringify(requestData),
         });
   
         const data = await response.json();
@@ -95,8 +111,6 @@ const Main = () => {
       }
     }, [cookies, id])
   
-    
-  
   const handleFavorite = useCallback(async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
     const token = cookies.get('access');
@@ -104,6 +118,7 @@ const Main = () => {
       const response = await fetch(`${apiUrl}/get-favorite/${id}/`, {
         method: 'POST',
         headers: {
+          
           'Authorization': `Bearer ${token}`,
         },
       });
@@ -113,6 +128,29 @@ const Main = () => {
         if (data.favorite == true) {
           setIsFavorited(true)  }}
     }
+    catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao adicionar local aos favoritos. Tente novamente mais tarde.');
+    }
+  }, [cookies, id])
+
+  const handleRating = useCallback(async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    try {
+      const response = await fetch(`${apiUrl}/get-rating/${id}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setHaveRating(true)
+        setRating(data.rating.rating)
+      }
+      }
     catch (error) {
       console.error('Erro na requisição:', error);
       toast.error('Erro ao adicionar local aos favoritos. Tente novamente mais tarde.');
@@ -135,7 +173,7 @@ const Main = () => {
   };
 
   const Settings: SwiperProps = {
-    spaceBetween: 10,
+    spaceBetween: 5,
     slidesPerView: 1,
   };
 
@@ -177,6 +215,7 @@ const Main = () => {
       const response = await fetch(`${apiUrl}/create-rating/`, {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ placeId: id, rating: newRating }),
@@ -197,18 +236,24 @@ const Main = () => {
   const renderStars = () => {
     const totalStars = 5;
     const filledStars = Math.floor(rating);
-    const halfStar = rating - filledStars >= 0.5 ? 1 : 0;
-    const emptyStars = totalStars - filledStars - halfStar;
+    const emptyStars = totalStars - filledStars
 
     const stars = [];
-    for (let i = 0; i < filledStars; i++) {
-      stars.push(<FaStar key={`full-${i}`} className="text-yellow-500 cursor-pointer" onClick={() => handleRatingChange(i + 1)} />);
-    }
-    if (halfStar) stars.push(<FaStarHalfAlt key="half" className="text-yellow-500 cursor-pointer" onClick={() => handleRatingChange(filledStars + 0.5)} />);
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<FaRegStar key={`empty-${i}`} className="text-yellow-500 cursor-pointer" onClick={() => handleRatingChange(filledStars + 1 + i)} />);
-    }
-
+    if (haveRating) {
+      for (let i = 0; i < rating; i++) {
+        stars.push(<FaStar key={`full-${i}`} className="text-yellow cursor-pointer hover:text-yellow" onClick={() => handleRatingChange(i + 1)} />);
+      }
+      for (let i = 0; i < emptyStars; i++){
+        stars.push(<FaRegStar key={`empty-${i}`} className="text-yellow-border cursor-pointer hover:text-yellow" onClick={() => handleRatingChange(filledStars + 1 + i)} />); 
+      }
+  }else {
+      for (let i = 0; i < filledStars; i++) {
+        stars.push(<FaStar key={`full-${i}`} className="text-yellow cursor-pointer hover:text-yellow" onClick={() => handleRatingChange(i + 1)} />);
+      }
+      for (let i = 0; i < emptyStars; i++) {
+        stars.push(<FaRegStar key={`empty-${i}`} className="text-yellow-border cursor-pointer hover:text-yellow" onClick={() => handleRatingChange(filledStars + 1 + i)} />);
+      }
+  }
     return stars;
   };
 
@@ -216,7 +261,7 @@ const Main = () => {
     setLoader(true)
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-      const response = await fetch(`${apiUrl}/get-place/${id}/`, {
+      const response = await fetch(`${apiUrl}/get-place-base/${id}/`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${cookies.get('access')}`,
@@ -224,7 +269,7 @@ const Main = () => {
       })
       const data = await response.json()
       if (response.ok && data.success) {
-        setPlace(data.place)
+        setPlaceBase(data.place)
         setRating(data.place.rating_number || 0); // Define a avaliação inicial
       } else {
         toast.error('Erro ao carregar locais')
@@ -236,16 +281,66 @@ const Main = () => {
     setLoader(false)
   }, [cookies, id])
 
+  const fetchPlaceLists = useCallback(async () => {
+    setLoader(true)
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/get-place-lists/${id}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cookies.get('access')}`,
+        },
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
+        setPlaceList(data.place)
+      } else {
+        toast.error('Erro ao carregar locais')
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error)
+      toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
+    }
+    setLoader(false)
+  }, [cookies, id])
+
+  const fetchPlaceAddress = useCallback(async () => {
+    setLoader(true)
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/get-place-address/${id}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cookies.get('access')}`,
+        },
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
+        setPlaceAddress(data.place)
+      } else {
+        toast.error('Erro ao carregar locais')
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error)
+      toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
+    }
+    setLoader(false)
+  }, [cookies, id])
+
+
   useEffect(() => {
     fetchPlaces()
     handleFavorite()
-  }, [fetchPlaces, handleFavorite])
+    fetchPlaceLists()
+    fetchPlaceAddress()
+    handleRating()
+  }, [fetchPlaces, handleFavorite, fetchPlaceLists, fetchPlaceAddress, handleRating])
 
   if (loader) {
     return <div>Carregando...</div>; // Exibe uma mensagem de carregamento
   }
 
-  if (!place) {
+  if (!placeBase) {
     return <div>Nenhum local encontrado.</div>; // Mensagem caso não haja dados
   }
 
@@ -254,23 +349,21 @@ const Main = () => {
       <ToastContainer />
       <div className="p-4 max-w-4xl mx-auto mt-20">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl ml-2 mb-2 font-bold">{place?.placeName}</h1>
+          <h1 className="text-2xl ml-2 mb-2 font-bold text-gray-900">{placeBase?.placeName}</h1>
           <button
             onClick={handleToggleFavorite}
-            className={`text-4xl ${isFavorited ? 'text-yellow-500' : 'text-gray-500'}`}
+            className={`text-4xl ${isFavorited ? 'text-yellow-button' : 'text-yellow'}`}
           >
             {isFavorited ? "★" : "★"}
           </button>
         </div>
         <div className="mt-2 text-xl mb-4">
           <div className="flex space-x-1">
-            {renderStars()}
+            {renderStars()} <span className="ml-2 text-xl ">{placeBase?.rating ?`${placeBase?.rating} Avaliações` : "Ainda não avaliado"}</span>
           </div>
-          <span className="ml-2 text-xl ">{place?.rating_number} Avaliações</span>
         </div>
-        <p className="mt-2 text-xl text-black">&#x1F4CD; {place?.street}, {place?.number}. {place?.neighborhood}, {place?.city}, {place?.state}</p>
         <Slider settings={sliderSettings}>
-          {place.photos.map((image, i) => (
+          {placeBase.photos.map((image, i) => (
             <SwiperSlide key={i} className="w-full h-96 object-cover rounded-md relative">
               <img
                 src={`http://localhost:8000${image}`}
@@ -286,7 +379,7 @@ const Main = () => {
             </SwiperSlide>
           ))}
         </Slider>
-
+        
         {isFullscreen && (
           <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
             <div className="w-full h-full max-w-4xl max-h-96 flex items-center justify-center">
@@ -298,7 +391,7 @@ const Main = () => {
                   slidesPerView: 1, // Um slide por vez
                 }}
               >
-                {place.photos.map((image, i) => (
+                {placeBase.photos.map((image, i) => (
                   <SwiperSlide key={i} className="flex justify-center items-center">
                     <div className="w-full h-full flex items-center justify-center">
                       <img
@@ -319,29 +412,34 @@ const Main = () => {
             </div>
           </div>
         )}
-
         {/* Avaliações */}
-        <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
+        <div className="mt-4 bg-gray-100 p-4 rounded-lg shadow-md hover:bg-gray-300 transition duration-300 focus:bg-gray-3">
           <h2 className="text-2xl font-bold mb-4">Sobre</h2>
-          <p className="text-lg text-gray-800 mb-4">{place?.about}</p>
-
+          <div className="hover:scale-105 transition-transform duration-300">
+            <p className="mt-2 text-xl text-black">&#x1F4CD; {placeAddress?.street}, {placeAddress?.number}, {placeAddress?.neighborhood}.</p>
+            <p className="mt-2 mb-4 text-xl text-black">{placeAddress?.city}, {placeAddress?.state}. {placeAddress?.cep}</p>
+          </div>
+          <div className="hover:scale-105 transition-transform duration-300">
+          <p className="text-lg text-gray-800 mb-4">{placeBase?.about}</p>
+          </div>
           <hr className="my-4" />
-
+          <div className="hover:scale-105 transition-transform duration-300">
           <p className="text-lg">
-            <strong>Descrição:</strong> {place?.description}
+            {placeBase?.description}
           </p>
-
+          </div>
           <hr className="my-4" />
-
+          <div className="hover:scale-105 transition-transform duration-300">
           <p className="text-lg text-green-button">
-            <strong>Horário de funcionamento:</strong> {place?.workStart} até {place?.workStop}
+            <strong>Horário de funcionamento:</strong> {placeBase?.workStart} até {placeBase?.workStop}
           </p>
-
+          </div>
           <hr className="my-4" />
-
+          <div className="hover:scale-105 transition-transform duration-300">
           <p className="text-lg">
-            <strong>Categorias:</strong> {place?.categories.join(", ")}
+               {placeList?.categories.join(", ")}.
           </p>
+          </div>
           <hr className="my-4" />
         </div>
 
@@ -356,7 +454,7 @@ const Main = () => {
           />
           <button
             className="mt-2 bg-blue text-white px-4 py-2 rounded-md hover:bg-blue"
-            onClick={handleAddComment}
+            onClick={() => handleAddComment(newComment)}
           >
             Enviar Comentário
           </button>

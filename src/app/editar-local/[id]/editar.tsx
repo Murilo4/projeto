@@ -528,15 +528,12 @@ const EditLocal: React.FC = () => {
                             </Carousel>
                         </div>
                         <div className="mx-auto w-3/4 ">
+                            <p className="text-gray-800 mt-2">{formValues.city && formValues.state ? `${formValues.city}, ${formValues.state}` : 'Localização'}</p>
+                            <p className="text-gray-800 mb-4">{formValues.about || 'Conte a história de seu estabelecimento'}</p>
                             <p className="text-gray-800 mb-4 mt-4">{formValues.description || 'Uma breve descrição do estabelecimento'}</p>
                             <p className="text-green-button mb-4">{formValues.workStart && formValues.workStop ? `Horário de funcionamento: ${formValues.workStart} - ${formValues.workStop}` : 'Horário de funcionamento'}</p>
                             <p className="">{formValues.lowerPrice && formValues.higherPrice ? `Valor dos produtos: R$ ${formValues.lowerPrice} A R$ ${formValues.higherPrice} Reais` : `Valor dos produtos`}</p>
                             <p className="text-gray-800 mb-4">{(formValues.categories || []).join(', ') || 'Categorias'}</p>
-                            <p className="text-gray-800 mb-4">{formValues.about || 'Conte a história de seu estabelecimento'}</p>
-                            <div className="w-full h-48 mt-2">
-                                <img src="/maps.jpg" alt="Map placeholder" className="w-full h-full object-cover rounded-lg" />
-                            </div>
-                            <p className="text-gray-800 mt-2">{formValues.city && formValues.state ? `${formValues.city}, ${formValues.state}` : 'Localização'}</p>
                         </div>
                     </div>
                 </div>

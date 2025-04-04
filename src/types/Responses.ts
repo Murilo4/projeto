@@ -16,6 +16,9 @@ export type SuccessResponse = {
     email: string
   }
   
+  export type User = {
+    name: string
+  }
   export type SuccessWithUserCredentials = {
     success: true
     user: User
