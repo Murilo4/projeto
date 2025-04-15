@@ -178,8 +178,8 @@ export const Partners = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const settings: SwiperProps = {
-    spaceBetween: 10,
-    slidesPerView: 3,
+    spaceBetween: 2,
+    slidesPerView: 5,
     breakpoints: {
       100: { slidesPerView: 1 },
       768: { slidesPerView: 2 },
@@ -223,16 +223,16 @@ export const Partners = () => {
     <section className="mx-auto max-w-full px-2 bg-blue-test">
       <div className="mx-auto max-w-1440px px-2 bg-blue-test">
         <p className="text-decoration-line: underline text-xl font-serif">Parceiros</p>
-        <div className="w-full h-80 mt-4 mb-10 bg-blue-test">
+        <div className="w-full h-52 mt-4 mb-10 bg-blue-test">
           <Slider settings={settings}>
             {slides.map((slide, index) => (
               <SwiperSlide key={index} className="flex justify-center">
-                <div className="flex flex-col items-center h-80">
+                <div className="flex flex-col items-center h-52 w-56">
                   <img
                     src={slide.src}
                     alt={slide.alt}
-                    className="w-full object-cover rounded-lg shadow-md shadow-slate-700"
-                    style={{ height: '85%' }}
+                    className="w-full object-fill rounded-lg shadow-md shadow-slate-700"
+                    style={{ height: '95%' }}
                     onClick={() => setActiveModal(index)} // Abre o modal dinâmico
                   />
                   <p

@@ -18,6 +18,7 @@ const UserAccount = () => {
     username: '',
     email: '',
     cpf: '',
+    cnpj: '',
     phone: '',
     photo: ''
   });
@@ -62,6 +63,7 @@ const UserAccount = () => {
             username: data.userData.username,
             email: data.userData.email,
             cpf: data.userData.cpf,
+            cnpj: data.userData.cnpj, 
             phone: data.userData.phone,
             photo: data.userData.photo
           };
@@ -315,7 +317,7 @@ const UserAccount = () => {
               />
             </div>
 
-            <div>
+            {userData.cpf? (<div>
               <p className="text-lg font-medium">CPF:</p>
               <input
                 type="text"
@@ -325,6 +327,19 @@ const UserAccount = () => {
                 className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+            ) : (
+              <div>
+                <p className="text-lg font-medium">CNPJ:</p>
+                <input
+                  type="text"
+                  value={userData.cnpj}
+                  placeholder='CNPJ'
+                  onChange={(e) => setUserData({ ...userData, cnpj: e.target.value })}
+                  className="w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            )
+            }
 
             <div>
               <p className="text-lg font-medium">Telefone:</p>
@@ -412,7 +427,7 @@ const UserAccount = () => {
           </div>
         </div>
 
-      {/* Address Form Section */}
+      {userData.cpf? (
       <div className="mt-10">
         <div className="flex justify-center items-center flex-col">
           <h2 className="text-2xl mb-4">Meus endereços</h2>
@@ -498,7 +513,14 @@ const UserAccount = () => {
             )}
             </div>
           )}
+        
       </div>
+      ): (
+        <div className="mt-10">
+          <p className="text-center text-xl"></p>
+        </div>
+      )}
+      
     </div>
   );
 };

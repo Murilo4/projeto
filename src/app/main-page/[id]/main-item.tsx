@@ -37,6 +37,7 @@ const data = {
 
 interface Place {
   id: number
+  slug: string
   placeName: string
   about: string
   description: string
@@ -50,9 +51,18 @@ interface Place {
 
 interface PlaceList {
   categories: string[]
-  comments: string[]
+  comments: PlaceComment[]
 }
- 
+
+interface PlaceComment {
+  username: string
+  comment: string
+  date: string
+  photo: File | null
+  rating: number
+  userHasComment?: boolean
+}
+
 interface PlaceAddress {
   street: string
   number: string
@@ -62,14 +72,9 @@ interface PlaceAddress {
   cep: string
 }
 
-interface PlaceData {
-  place: Place
-  placeList: PlaceList
-  placeAddress: PlaceAddress
-}
 
 const Main = () => {
-  const [comments, setComments] = useState<string[]>(data.comments || []);
+  const [comments, setComments] = useState<PlaceComment[]>(data.comments || []);
   const [newComment, setNewComment] = useState<string>("");
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const cookies = useMemo(() => new Cookies(), [])
@@ -81,36 +86,73 @@ const Main = () => {
   const [placeBase, setPlaceBase] = useState<Place | null>(null)
   const [placeList, setPlaceList] = useState<PlaceList | null>(null)
   const [placeAddress, setPlaceAddress] = useState<PlaceAddress | null>(null)
-  const [rating, setRating] = useState<number>(0); 
+  const [rating, setRating] = useState<number>(0);
   const [haveRating, setHaveRating] = useState<boolean>(false);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editingCommentText, setEditingCommentText] = useState<string>("");
 
-  const handleAddComment = useCallback(async (newComment: string) => {
-      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-      const token = cookies.get('access');
-      try {
-        const requestData = {
-          comment: newComment
-        }
-        console.log(requestData)
-        const response = await fetch(`${apiUrl}/send-comment/${id}/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify(requestData),
-        });
   
-        const data = await response.json();
-        if (response.ok && data.success) {
-          router.push(`/main-page/${id}`)
-      }}
-      catch (error) {
-        console.error('Erro na requisição:', error);
-        toast.error('Erro ao adicionar o comentario. Tente novamente mais tarde.');
+
+  const handleEditComment = (commentText: string) => {
+    setNewComment(commentText); // Set the comment text in the input box for editing
+  };
+
+  const handleDeleteComment = async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    try {
+      const response = await fetch(`${apiUrl}/delete-comment/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        toast.success('Comentário excluído com sucesso!');
+        setComments((prevComments) => prevComments.filter((comment) => !comment.userHasComment));
+      } else {
+        toast.error('Erro ao excluir o comentário.');
       }
-    }, [cookies, id])
-  
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao excluir o comentário. Tente novamente mais tarde.');
+    }
+  };
+
+  const handleUpdateComment = async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    try {
+      const response = await fetch(`${apiUrl}/update-comment/${id}/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ commentId: editingCommentId, comment: editingCommentText }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        toast.success('Comentário atualizado com sucesso!');
+        setEditingCommentId(null);
+        setEditingCommentText("");
+        fetchPlaceLists(); // Re-fetch comments after update
+      } else {
+        toast.error('Erro ao atualizar o comentário.');
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao atualizar o comentário. Tente novamente mais tarde.');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditingCommentText("");
+  };
+
   const handleFavorite = useCallback(async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
     const token = cookies.get('access');
@@ -118,7 +160,7 @@ const Main = () => {
       const response = await fetch(`${apiUrl}/get-favorite/${id}/`, {
         method: 'POST',
         headers: {
-          
+
           'Authorization': `Bearer ${token}`,
         },
       });
@@ -126,7 +168,9 @@ const Main = () => {
       const data = await response.json();
       if (response.ok && data.success) {
         if (data.favorite == true) {
-          setIsFavorited(true)  }}
+          setIsFavorited(true)
+        }
+      }
     }
     catch (error) {
       console.error('Erro na requisição:', error);
@@ -147,10 +191,11 @@ const Main = () => {
 
       const data = await response.json();
       if (response.ok && data.success) {
+        console.log(data.rating.rating)
         setHaveRating(true)
         setRating(data.rating.rating)
       }
-      }
+    }
     catch (error) {
       console.error('Erro na requisição:', error);
       toast.error('Erro ao adicionar local aos favoritos. Tente novamente mais tarde.');
@@ -210,7 +255,7 @@ const Main = () => {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
     const token = cookies.get('access');
-    
+
     try {
       const response = await fetch(`${apiUrl}/create-rating/`, {
         method: 'POST',
@@ -231,30 +276,6 @@ const Main = () => {
       console.error('Erro na requisição:', error);
       toast.error('Erro ao enviar avaliação. Tente novamente mais tarde.');
     }
-  };
-
-  const renderStars = () => {
-    const totalStars = 5;
-    const filledStars = Math.floor(rating);
-    const emptyStars = totalStars - filledStars
-
-    const stars = [];
-    if (haveRating) {
-      for (let i = 0; i < rating; i++) {
-        stars.push(<FaStar key={`full-${i}`} className="text-yellow cursor-pointer hover:text-yellow" onClick={() => handleRatingChange(i + 1)} />);
-      }
-      for (let i = 0; i < emptyStars; i++){
-        stars.push(<FaRegStar key={`empty-${i}`} className="text-yellow-border cursor-pointer hover:text-yellow" onClick={() => handleRatingChange(filledStars + 1 + i)} />); 
-      }
-  }else {
-      for (let i = 0; i < filledStars; i++) {
-        stars.push(<FaStar key={`full-${i}`} className="text-yellow cursor-pointer hover:text-yellow" onClick={() => handleRatingChange(i + 1)} />);
-      }
-      for (let i = 0; i < emptyStars; i++) {
-        stars.push(<FaRegStar key={`empty-${i}`} className="text-yellow-border cursor-pointer hover:text-yellow" onClick={() => handleRatingChange(filledStars + 1 + i)} />);
-      }
-  }
-    return stars;
   };
 
   const fetchPlaces = useCallback(async () => {
@@ -294,6 +315,7 @@ const Main = () => {
       const data = await response.json()
       if (response.ok && data.success) {
         setPlaceList(data.place)
+        setComments(data.place.comments)
       } else {
         toast.error('Erro ao carregar locais')
       }
@@ -327,21 +349,85 @@ const Main = () => {
     setLoader(false)
   }, [cookies, id])
 
+  const renderStars = () => {
+    const totalStars = 5;
+    const filledStars = rating; // Use the rating directly
+    const emptyStars = totalStars - filledStars;
+
+    const stars = [];
+    for (let i = 0; i < filledStars; i++) {
+      stars.push(
+        <FaStar
+          key={`full-${i}`}
+          className="text-yellow cursor-pointer hover:text-yellow"
+          onClick={() => handleRatingChange(i + 1)}
+        />
+      );
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <FaRegStar
+          key={`empty-${i}`}
+          className="text-yellow-border cursor-pointer hover:text-yellow"
+          onClick={() => handleRatingChange(filledStars + 1 + i)}
+        />
+      );
+    }
+
+    return stars;
+  };
 
   useEffect(() => {
-    fetchPlaces()
-    handleFavorite()
-    fetchPlaceLists()
-    fetchPlaceAddress()
-    handleRating()
-  }, [fetchPlaces, handleFavorite, fetchPlaceLists, fetchPlaceAddress, handleRating])
+    const fetchData = async () => {
+      await fetchPlaces();
+      await handleFavorite();
+      await fetchPlaceLists();
+      await fetchPlaceAddress();
+      handleRating(); // Fetch rating independently without awaiting
+    };
 
-  if (loader) {
-    return <div>Carregando...</div>; // Exibe uma mensagem de carregamento
+    fetchData();
+  }, [fetchPlaces, handleFavorite, fetchPlaceLists, fetchPlaceAddress, handleRating]);
+
+  const handleAddComment = useCallback(async (newComment: string) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    if (!token) {
+      toast.error('Você precisa estar logado para adicionar um comentário.');
+      return;
+    }
+    try {
+      const requestData = { comment: newComment };
+      const response = await fetch(`${apiUrl}/send-comment/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        toast.success('Comentário adicionado com sucesso!');
+        setNewComment(""); // Clear the text box
+        fetchPlaceLists(); // Refresh comments
+      } else {
+        toast.error('Erro ao adicionar o comentário.');
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao adicionar o comentário. Tente novamente mais tarde.');
+    }
+  }, [cookies, id, fetchPlaceLists]);
+
+  if (loader && !placeBase) {
+    return <div>Carregando...</div>; // Show loading only if placeBase is not loaded
   }
 
   if (!placeBase) {
-    return <div>Nenhum local encontrado.</div>; // Mensagem caso não haja dados
+    return <div>Nenhum local encontrado.</div>; // Show this message if no place data is available
   }
 
   return (
@@ -349,17 +435,22 @@ const Main = () => {
       <ToastContainer />
       <div className="p-4 max-w-4xl mx-auto mt-20">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl ml-2 mb-2 font-bold text-gray-900">{placeBase?.placeName}</h1>
+          <h1 className="text-2xl ml-2 mb-2 font-serif text-gray-900">{placeBase?.placeName}</h1>
           <button
             onClick={handleToggleFavorite}
-            className={`text-4xl ${isFavorited ? 'text-yellow-button' : 'text-yellow'}`}
+            className={`text-lg ${isFavorited ? 'text-yellow' : 'text-gray-400'} hover:text-yellow transition duration-300`}
           >
-            {isFavorited ? "★" : "★"}
+            {isFavorited ? "Remover dos favoritos ★" : "Adicionar aos favoritos ★"}
           </button>
         </div>
         <div className="mt-2 text-xl mb-4">
           <div className="flex space-x-1">
-            {renderStars()} <span className="ml-2 text-xl ">{placeBase?.rating ?`${placeBase?.rating} Avaliações` : "Ainda não avaliado"}</span>
+            {haveRating ? renderStars() : <p></p>} {/* Render stars or show loading */}
+            <span className="ml-2 text-xl ">
+              {placeBase?.rating
+                ? `${placeBase?.rating} ${placeBase?.rating === 1 ? 'Avaliação' : 'Avaliações'}`
+                : "Ainda não avaliado"}
+            </span>
           </div>
         </div>
         <Slider settings={sliderSettings}>
@@ -379,7 +470,7 @@ const Main = () => {
             </SwiperSlide>
           ))}
         </Slider>
-        
+
         {isFullscreen && (
           <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
             <div className="w-full h-full max-w-4xl max-h-96 flex items-center justify-center">
@@ -414,51 +505,69 @@ const Main = () => {
         )}
         {/* Avaliações */}
         <div className="mt-4 bg-gray-100 p-4 rounded-lg shadow-md hover:bg-gray-300 transition duration-300 focus:bg-gray-3">
-          <h2 className="text-2xl font-bold mb-4">Sobre</h2>
           <div className="hover:scale-105 transition-transform duration-300">
-            <p className="mt-2 text-xl text-black">&#x1F4CD; {placeAddress?.street}, {placeAddress?.number}, {placeAddress?.neighborhood}.</p>
-            <p className="mt-2 mb-4 text-xl text-black">{placeAddress?.city}, {placeAddress?.state}. {placeAddress?.cep}</p>
+            <p className="text-2xl text-black font-serif">Endereço</p>
+              <p className="mt-2 text-xl text-black">&#x1F4CD; {placeAddress?.street}, {placeAddress?.number}, {placeAddress?.neighborhood}.</p>
+              <p className="mt-2 mb-4 text-xl text-black">{placeAddress?.city}, {placeAddress?.state}. {placeAddress?.cep}</p>
           </div>
           <div className="hover:scale-105 transition-transform duration-300">
-          <p className="text-lg text-gray-800 mb-4">{placeBase?.about}</p>
-          </div>
-          <hr className="my-4" />
-          <div className="hover:scale-105 transition-transform duration-300">
-          <p className="text-lg">
-            {placeBase?.description}
-          </p>
+            <p className="text-2xl text-black font-serif">Sobre o local</p>
+            <p className="text-lg text-black mb-4">{placeBase?.about}</p>
           </div>
           <hr className="my-4" />
           <div className="hover:scale-105 transition-transform duration-300">
-          <p className="text-lg text-green-button">
-            <strong>Horário de funcionamento:</strong> {placeBase?.workStart} até {placeBase?.workStop}
-          </p>
+              <p className="text-2xl text-black font-serif">Descrição</p>
+              <p className="text-lg">{placeBase?.description}</p>
           </div>
           <hr className="my-4" />
           <div className="hover:scale-105 transition-transform duration-300">
-          <p className="text-lg">
-               {placeList?.categories.join(", ")}.
-          </p>
+            <p className="text-lg font-serif text-green-button">
+              <strong>Horário de funcionamento:</strong> {placeBase?.workStart} até {placeBase?.workStop}
+            </p>
+          </div>
+          <hr className="my-4" />
+          <div className="hover:scale-105 transition-transform duration-300">
+              <p className="text-2xl text-black font-serif">O que você pode encontrar no local:</p>
+              {placeList?.categories.join(", ")}.
           </div>
           <hr className="my-4" />
         </div>
 
         {/* Adicionar Comentário */}
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold">Adicionar Comentário</h3>
-          <textarea
-            className="w-full border rounded-md p-2 mt-2 h-24"
-            placeholder="Escreva seu comentário aqui..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          />
-          <button
-            className="mt-2 bg-blue text-white px-4 py-2 rounded-md hover:bg-blue"
-            onClick={() => handleAddComment(newComment)}
-          >
-            Enviar Comentário
-          </button>
-        </div>
+        {!comments.some((comment) => comment.userHasComment) && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold">Adicionar Comentário</h3>
+            <textarea
+              className="w-full border placeholder:text-black border-gray-500 rounded-md p-2 mt-2 h-24"
+              placeholder="Escreva seu comentário aqui..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            {cookies.get('access') ? (
+              <button
+                className="mt-2 bg-blue text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                onClick={() => handleAddComment(newComment)}
+              >
+                Enviar Comentário
+              </button>
+            ) : (
+              <div className="mt-2 flex space-x-2">
+                <button
+                  className="bg-gray-500 text-white px-4 py-2 rounded-md cursor-not-allowed"
+                  disabled
+                >
+                  Logue para adicionar um comentário
+                </button>
+                <button
+                  className="bg-blue text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                  onClick={() => router.push('/login')}
+                >
+                  Ir para Login
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Comentários */}
         <div className="mt-4">
@@ -466,12 +575,75 @@ const Main = () => {
           <ul className="mt-4 space-y-3">
             {comments.length > 0 ? (
               comments.map((comment, index) => (
-                <li key={index} className="bg-gray-100 p-3 rounded-md shadow-sm">
-                  {comment}
+                <li key={index} className="bg-gray-100 p-3 rounded-md shadow-sm flex items-start">
+                  <img
+                    src={`http://localhost:8000${comment?.photo}` || '/default-profile.png'} // Default profile picture if none is provided
+                    alt="Foto do perfil"
+                    className="w-10 h-10 rounded-full mr-3"
+                  />
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-gray-800 mr-4">{comment.username}</h4>
+                      <span className="text-sm text-gray-500">{new Date(comment.date).toLocaleDateString()}</span>
+                      <span className="flex ml-2">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <span key={i} className={`text-yellow ${i < comment.rating ? 'text-yellow' : 'text-yellow-border'}`}>
+                            {i < comment.rating ? <FaStar /> : <FaRegStar />}
+                          </span>
+                        ))}
+                      </span>
+                    </div>
+                    {editingCommentId === index ? (
+                      <div className="mt-2">
+                        <textarea
+                          className="w-full border rounded-md p-2 h-24"
+                          value={editingCommentText}
+                          onChange={(e) => setEditingCommentText(e.target.value)}
+                        />
+                        <div className="flex space-x-2 mt-2">
+                          <button
+                            className="bg-green text-white px-3 py-1 rounded-md hover:bg-green-600"
+                            onClick={handleUpdateComment}
+                          >
+                            Atualizar
+                          </button>
+                          <button
+                            className="bg-gray-800 text-white px-3 py-1 rounded-md hover:bg-gray-600"
+                            onClick={handleCancelEdit}
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-gray-900 mt-1">{comment.comment}</p>
+                        {comment.userHasComment && (
+                          <div className="flex space-x-2 mt-2">
+                            <button
+                              className="bg-blue text-white px-3 py-1 rounded-md hover:bg-blue-600"
+                              onClick={() => {
+                                setEditingCommentId(index);
+                                setEditingCommentText(comment.comment);
+                              }}
+                            >
+                              Editar
+                            </button>
+                            <button
+                              className="bg-red text-white px-3 py-1 rounded-md hover:bg-red-600"
+                              onClick={handleDeleteComment}
+                            >
+                              Excluir
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </li>
               ))
             ) : (
-              <li className="text-gray-500">Nenhum comentário ainda. Seja o primeiro a comentar!</li>
+              <li className="text-gray-700">Nenhum comentário ainda. Seja o primeiro a comentar!</li>
             )}
           </ul>
         </div>

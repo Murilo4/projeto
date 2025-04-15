@@ -25,7 +25,6 @@ const Header: React.FC<HeaderProps> = () => {
       setIsLoggedIn(true);
       // Fetch user data to determine if they have CPF or CNPJ
       fetchUserData().then(data => {
-        console.log(data)
         if (data.cpf) {
           setUserType("cpf");
         } else if (data.cnpj) {
@@ -34,7 +33,9 @@ const Header: React.FC<HeaderProps> = () => {
       });
     }
   }, []);
-
+  const handleBottonClick = (local: string) => {
+    router.push(`/results/search=${local}`);
+  }
   const fetchUserData = async () => {
     const cookies = new Cookies();
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
@@ -98,21 +99,24 @@ const Header: React.FC<HeaderProps> = () => {
                 >
                   &times;
                 </button>
-                <h2 className="text-xl mb-4 font-semibold text-center text-dark-blue">Novidades</h2>
-                <ul className="space-y-3">
-                  <li>
-                      <button
-                      onClick={ () => router.push(`results?search=restaurantes`)}>
-                      <img src="/icons/restaurant.svg" alt="Restaurantes" className="w-6 h-6 mr-2" />
-                      Restaurantes mais populares
-                      </button>
-                    
-                  </li>
-                  <li>
+                <h2 className="text-xl mb-4 font-semibold text-center">Novidades</h2>
+                <ul className="space-y-3 flex-col">
+                  <li className="flex items-center">
                     <button
-                      onClick={ () => router.push(`results?search=hoteis`)}>
-                      <img src="/icons/hotel.svg" alt="Restaurantes" className="w-6 h-6 mr-2" />
-                      Hotéis mais procurados
+                      onClick={() => handleBottonClick("restaurantes")}
+                      className="flex items-center"
+                    >
+                      <img src="/restaurante.png" alt="Restaurantes" className="w-6 h-6 mr-2" />
+                      <span className="underline">Restaurantes mais populares</span>
+                    </button>
+                  </li>
+                  <li className="flex items-center">
+                    <button
+                      onClick={() => handleBottonClick("hoteis")}
+                      className="flex items-center"
+                    >
+                      <img src="/hoteis.png" alt="Hotéis" className="w-6 h-6 mr-2" />
+                      <span className="underline">Hotéis mais procurados</span>
                     </button>
                   </li>
                 </ul>
@@ -335,6 +339,7 @@ const Header: React.FC<HeaderProps> = () => {
                     </div>
                   )}
                 </li>
+                {userType === "cpf" && (
                 <li>
                   <button
                     className="text-slate-800 hover:underline w-full mb-2 text-left"
@@ -343,6 +348,16 @@ const Header: React.FC<HeaderProps> = () => {
                     Meus Ganhos
                   </button>
                 </li>
+                ) } {userType === "cnpj" && (
+                <li>
+                  <button
+                    className="text-slate-800 hover:underline w-full mb-2 text-left"
+                  >
+                    <a href="/meus-locais" target="_blank"></a>
+                    Meus Locais
+                  </button>
+                </li> 
+                )}
                 <li>
                   <button
                     className="text-slate-800 hover:underline w-full mb-6 text-left"

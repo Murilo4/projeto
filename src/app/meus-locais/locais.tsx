@@ -9,6 +9,7 @@ import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 
 interface Place {
   id: number
+  slug: string
   placeName: string
   about: string
   description: string
@@ -30,8 +31,10 @@ interface PlaceData {
 const Locais: React.FC = () => {
   const cookies = useMemo(() => new Cookies(), [])
   const [places, setPlaces] = useState<PlaceData[]>([])
+  const [placesCount, setPlacesCount] = useState<number>(0)
   const [loader, setLoader] = useState<boolean>(false)
   const router = useRouter()
+  const [userPlan, setUserPlan] = useState<number>(1)
 
   const validateToken = useCallback(async () => {
     const token = cookies.get('access')
@@ -66,6 +69,7 @@ const Locais: React.FC = () => {
       const data = await response.json()
       if (response.ok && data.success) {
         setPlaces(data.place)
+        setPlacesCount(data.numberPlaces)
       } else {
         toast.error('Erro ao carregar locais')
       }
@@ -80,6 +84,34 @@ const Locais: React.FC = () => {
     validateToken()
     fetchPlaces()
   }, [validateToken, fetchPlaces])
+
+  const handleUserPlan = useCallback(async () => {
+    const token = cookies.get('access')
+    if (!token) {
+      router.push('/')
+      return
+    }
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/user-plan/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setUserPlan(data.plan.placesAllowed)
+      }
+    } catch (error) {
+      console.error('Erro ao validar token:', error)
+      router.push('/')
+    }
+  }, [router, cookies])
+
+  useEffect(() => {
+    handleUserPlan()
+  }, [handleUserPlan])
 
   const handleCreatePlace = () => {
     router.push('/criar-local')
@@ -115,14 +147,20 @@ const Locais: React.FC = () => {
       <div className="container mx-auto p-2 relative mt-28">
         <div className="container mx-auto relative">
           <h1 className="text-2xl font-bold text-center mb-1">Gerenciamento de locais</h1>
-          <div className="text-center">
-               <button
-                 onClick={handleCreatePlace}
-                 className="bg-principal-blue text-white py-2 px-4 mb-4 rounded-md hover:bg-blue-600"
-               >
-                 Criar Novo local
-               </button>
-          </div>
+          {loader ? (
+              <p></p>
+            ) : (placesCount == userPlan || placesCount > userPlan ? (
+                <p className="text-center text-red-500 mb-4">Você atingiu o limite de locais permitidos no seu plano.</p>
+              ) : (
+                <div className="text-center">
+                    <button
+                      onClick={handleCreatePlace}
+                      className="bg-principal-blue text-white py-2 px-4 mb-4 rounded-md hover:bg-blue-600"
+                    >
+                      Criar Novo local
+                    </button>
+                </div>
+              ))}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {loader ? (
               <p>Carregando locais...</p>
@@ -151,21 +189,21 @@ const Locais: React.FC = () => {
                   <div className="flex justify-center w-full mt-4">
                     <div className="grid grid-cols-2 gap-2 w-full">
                       <button
-                        onClick={() => router.push(`/editar-local/${placeData.place.id}`)}
+                        onClick={() => router.push(`/editar-local/${placeData.place.slug}`)}
                         className="bg-blue text-white p-2 rounded-md hover:bg-dark-blue flex flex-col shadow-md shadow-slate-400  items-center hover:scale-105"
                       >
                         <FaEdit />
                         <span className="text-xs">Editar</span>
                       </button>
                       <button
-                        onClick={() => router.push(`/editar-endereco-local/${placeData.place.id}`)}
+                        onClick={() => router.push(`/editar-endereco-local/${placeData.place.slug}`)}
                         className="bg-blue-thirth text-white p-2 rounded-md hover:bg-dark-blue flex flex-col shadow-md shadow-slate-400 items-center w-full hover:scale-105"
                       >
                         <FaEdit />
                         <span className="text-xs">Editar endereço</span>
                       </button>
                       <button
-                        onClick={() => router.push(`/main-page/${placeData.place.id}?${placeData.place.placeName}`)}
+                        onClick={() => router.push(`/main-page/${placeData.place.slug}`)}
                         className="bg-green text-white p-2 rounded-md hover:bg-green-button flex flex-col shadow-md shadow-slate-400  items-center w-full hover:scale-105"
                       >
                         <FaEye />

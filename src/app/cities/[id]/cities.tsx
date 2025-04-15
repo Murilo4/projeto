@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Slider from '@/components/Slider'; // Componente Slider fornecido
 import { SwiperSlide } from 'swiper/react';
 import { Restaurante, Historia, CidadeData, Atracao, Hoteis, Cultura, Teatro } from '@/types/Restaurantes';
@@ -10,7 +10,6 @@ const ResultsCitys = () => {
   const [cityData, setCityData] = useState<CidadeData | null>(null);
   const [city, setCity] = useState<string | null>(null);
   const [sortedCategories, setSortedCategories] = useState<string[]>([]);
-  
   const [restaurants, setRestaurants] = useState<Restaurante[]>([]);
   const [history, setHistory] = useState<Historia[]>([]);
   const [attractions, setAttractions] = useState<Atracao[]>([]);
@@ -18,57 +17,65 @@ const ResultsCitys = () => {
   const [culture, setCulture] = useState<Cultura[]>([]);
   const [theater, setTheater] = useState<Teatro[]>([]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const searchCity = params.get('search');
-    
-    if (searchCity) {
-      setCity(searchCity);
-      
-      // Fazendo as requisições para as categorias separadas
-      fetchCityData(searchCity);
-    }
-  }, []);
-
-  const fetchCityData = async (city: string) => {
+  const fetchCityData = useCallback( async (city: string) => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
       // Requisição para Restaurantes
-      const restaurantsResponse = await fetch(`/${apiUrl}/restaurantes?city=${city}`);
-      const restaurantsData = await restaurantsResponse.json();
-      setRestaurants(restaurantsData);
-
+      const restaurantsResponse = await fetch(`${apiUrl}/get-all-places/${1}/?&city=npm &type=Restaurante`, {
+        method: 'GET',
+      });;
+      if(restaurantsResponse.ok) {  
+        const restaurantsData = await restaurantsResponse.json();
+        console.log(restaurantsData)
+        setRestaurants(restaurantsData);
+      }
       // Requisição para História
-      const historyResponse = await fetch(`/${apiUrl}/historia?city=${city}`);
-      const historyData = await historyResponse.json();
-      setHistory(historyData);
-
+      const historyResponse = await fetch(`${apiUrl}/historia?city=${city}`);
+      if (historyResponse.ok) {
+        // Verifica se a resposta é válida
+        const historyData = await historyResponse.json();
+        setHistory(historyData);
+      }
       // Requisição para Atrações
-      const attractionsResponse = await fetch(`/${apiUrl}/atracoes?city=${city}`);
-      const attractionsData = await attractionsResponse.json();
-      setAttractions(attractionsData);
-
+      const attractionsResponse = await fetch(`${apiUrl}/get-all-places/${1}/?&city=${city}&type=atracao`);
+      if (attractionsResponse.ok) {
+        const attractionsData = await attractionsResponse.json();
+        setAttractions(attractionsData);
+      }
       // Requisição para Hoteis
-      const hotelsResponse = await fetch(`/${apiUrl}/hoteis?city=${city}`);
-      const hotelsData = await hotelsResponse.json();
-      setHotels(hotelsData);
+      const hotelsResponse = await fetch(`${apiUrl}/get-all-places/${1}/?&city=${city}&type=hotel`);
+      if (hotelsResponse.ok) {
+        const hotelsData = await hotelsResponse.json();
+        setHotels(hotelsData);
+      }
+
 
       // Requisição para Cultura
-      const cultureResponse = await fetch(`/${apiUrl}/cultura?city=${city}`);
-      const cultureData = await cultureResponse.json();
-      setCulture(cultureData);
+      const cultureResponse = await fetch(`${apiUrl}/cultura?city=${city}`);
+      if (cultureResponse.ok) {
+        // Verifica se a resposta é válida
+        const cultureData = await cultureResponse.json();
+        setCulture(cultureData);
+      }
 
       // Requisição para Teatro
-      const theaterResponse = await fetch(`/${apiUrl}/teatro?city=${city}`);
-      const theaterData = await theaterResponse.json();
-      setTheater(theaterData);
+      const theaterResponse = await fetch(`${apiUrl}/get-all-places/${1}/?&city=${city}&type=teatro`);
+      if (theaterResponse.ok) {
+        const theaterData = await theaterResponse.json();
+        setTheater(theaterData);
+      }
       
       // Adiciona as categorias para exibição condicional
       setSortedCategories(['Restaurantes', 'Hoteis', 'Historia', 'Atrações', 'Cultura', 'Teatro']);
     } catch (error) {
       console.error("Erro ao buscar dados da cidade:", error);
     }
-  };
+  }, [])
+
+  useEffect(() => {
+    fetchCityData(city || '');
+  }
+  , [fetchCityData]);
 
   const sliderSettings: SwiperProps = {
     spaceBetween: 10,

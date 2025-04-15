@@ -35,7 +35,7 @@ const Search = () => {
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Impede o comportamento padrão do formulário
     if (searchTerm.trim()) { // Verifica se o termo de pesquisa não está vazio
-      router.push(`/results?search=${encodeURIComponent(searchTerm)}`);
+      router.push(`/results/search=${encodeURIComponent(searchTerm)}`);
     }
   };
 

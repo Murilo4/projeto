@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import Cookies from 'universal-cookie'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
+import { LuAlignHorizontalDistributeStart } from 'react-icons/lu'
 
 const initialValues: FormRegisterAddressValues = {
     addressName: '',
@@ -48,7 +49,8 @@ interface Place {
 
 const CreateAddressLocal: React.FC = () => {
     const cookies = useMemo(() => new Cookies(), [])
-    const [loader, setLoader] = useState<boolean>(false)
+    const [loaderPlace, setLoaderPlace] = useState<boolean>(false)
+    const [loaderAddress, setLoaderAddress] = useState<boolean>(false)
     const router = useRouter()
     const [formValues, setFormValues] = useState<FormRegisterAddressValues>(initialValues)
     const [formErrors, setFormErrors] = useState<FormRegisterAddressErrors>(initialErrors)
@@ -62,6 +64,7 @@ const CreateAddressLocal: React.FC = () => {
     }
 
     const fetchPlaceData = useCallback(async () => {
+        setLoaderPlace(true)
         try {
             const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
             const response = await fetch(`${apiUrl}/get-place/${placeId}/`)
@@ -79,15 +82,39 @@ const CreateAddressLocal: React.FC = () => {
                     cep: data.place.cep,
                     number: data.place.number,
                 }))
+                setLoaderPlace(false)
             }
         } catch (error) {
             console.error('Erro ao buscar dados do local:', error)
         }
     }, [placeId])
-
+    const fetchAddressData = useCallback(async () => { 
+        setLoaderAddress(true)
+        try {
+            const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+            const response = await fetch(`${apiUrl}/get-place-address/${placeId}/`)
+            const data = await response.json()
+            if (data.success) {
+                setFormValues((prev) => ({
+                    ...prev,
+                    addressName: data.place.addressName,
+                    street: data.place.street,
+                    neighborhood: data.place.neighborhood,
+                    city: data.place.city,
+                    state: data.place.state,
+                    cep: data.place.cep,
+                    number: data.place.number,
+                }))
+                setLoaderAddress(false)
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados do local:', error)
+        }
+    }, [placeId])
     useEffect(() => {
         fetchPlaceData()
-    }, [fetchPlaceData])
+        fetchAddressData()
+    }, [fetchPlaceData, fetchAddressData])
 
     const handleCepLookup = async (cep: string) => {
         if (!cep) return;
@@ -116,7 +143,7 @@ const CreateAddressLocal: React.FC = () => {
 
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        setLoader(true)
+        setLoaderPlace(true)
 
         const validation = addressSchema.safeParse(formValues)
 
@@ -134,7 +161,7 @@ const CreateAddressLocal: React.FC = () => {
                 })
             })
 
-            setLoader(false)
+            setLoaderPlace(false)
             return
         }
 
@@ -158,7 +185,7 @@ const CreateAddressLocal: React.FC = () => {
 
             if (response.status === 429) {
                 toast.error('Muitas requisições. Tente novamente mais tarde.')
-                setLoader(false)
+                setLoaderPlace(false)
                 return
             }
 
@@ -173,7 +200,7 @@ const CreateAddressLocal: React.FC = () => {
             toast.error('Erro ao enviar a requisição. Tente novamente mais tarde.')
         }
 
-        setLoader(false)
+        setLoaderPlace(false)
     }
 
     const handlebuttonBackClick = () => {
@@ -190,6 +217,11 @@ const CreateAddressLocal: React.FC = () => {
                     <div className='flex border-2 w-20 bg-blue rounded-xl mt-2 p-2 mb-4 shadow-sm bg-blue-500 text-white'>
                         <button className='flex content-center justify-center pl-2' onClick={handlebuttonBackClick}>Voltar</button>
                     </div>
+                    {loaderAddress ? (
+                        <div className="flex items-center justify-center h-screen">
+                            <div className="loader">Carregando...</div>
+                        </div>
+                    ) : ( 
                     <form className="space-y-4 mx-auto w-9/12" onSubmit={handleFormSubmit}>
                         <input
                             type="text"
@@ -261,15 +293,21 @@ const CreateAddressLocal: React.FC = () => {
                             value={formValues.state}
                         />
                         {formErrors.state?.length > 0 && <p className="text-red-500 text-sm">{formErrors.state[0]}</p>}
-
+            
                         <button
                             type="submit"
                             className="w-full mt-4 text-xl bg-blue text-white font-bold py-3 px-4 rounded-3xl hover:bg-blue-600 transition"
                         >
-                            {loader ? 'Enviando...' : 'editar endereço'}
+                            {loaderPlace ? 'Enviando...' : 'editar endereço'}
                         </button>
                     </form>
+                    )}
                 </div>
+                {loaderPlace ? (
+                    <div className="flex items-center justify-center h-screen w-5/12">
+                        <div className="loader">Carregando...</div>
+                    </div>
+                ) : (
                 <div className="w-5/12 bg-white pt-0 pl-1 shadow-lg rounded-lg flex flex-col justify-between">
                     <h2 className="text-2xl font-bold mb-4 ml-2">Pré visualização</h2>
                     <div className="border border-gray-300 p-1 rounded-lg flex flex-col justify-between h-full">
@@ -346,6 +384,7 @@ const CreateAddressLocal: React.FC = () => {
                         </div>
                     </div>
                 </div>
+                )}
             </div>
         </>
     )

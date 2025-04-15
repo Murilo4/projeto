@@ -10,8 +10,9 @@ interface Plan {
     planName: string;
     description: string;
     price: number;
-    numberEvents: number;
+    numberImages: number;
     imageOnQuestions: boolean;
+    placesAllowed: number;
 }
 
 interface PlansResponse {
@@ -91,12 +92,9 @@ const PlanosPage: React.FC = () => {
                             <hr className="my-4" />
                             <p className="text-lg text-gray-600 mt-2">{plan.description}</p>
                             <ul className="list-disc list-inside text-gray-700 mt-2">
-                                <li>Disponibilidade para a criação de até <span className="font-bold text-orange-500">{plan.numberEvents}</span> eventos.</li>
-                                <li>
-                                    {plan.imageOnQuestions
-                                        ? 'Permite adicionar fotos às perguntas criadas'
-                                        : 'Sem suporte a fotos nas perguntas'}
-                                </li>
+                                <li>Disponibilidade para a criação de um local com até <span className="font-bold text-orange-500">{plan.numberImages}</span> fotos.</li>
+                                    {plan.placesAllowed? (<li>Permite a criação de até<span className="font-bold text-orange-500"> {plan.placesAllowed} </span> local</li>):
+                                     (<li>Permite a criação de até 1 local</li>)}
                             </ul>
                         </div>
                     ))}

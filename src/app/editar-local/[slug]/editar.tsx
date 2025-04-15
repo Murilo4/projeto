@@ -60,7 +60,7 @@ const initialErrors: FormRegisterPlaceErrors = {
 const EditLocal: React.FC = () => {
     const cookies = useMemo(() => new Cookies(), [])
     const router = useRouter()
-    const { id } = useParams()
+    const { slug } = useParams()
     const [formValues, setFormValues] = useState<FormRegisterPlaceValues>(initialValues)
     const [formErrors, setFormErrors] = useState<FormRegisterPlaceErrors>(initialErrors)
     const [categoriesData, setCategoriesData] = useState<categories[]>([])
@@ -75,7 +75,7 @@ const EditLocal: React.FC = () => {
         setLoader(true)
         try {
             const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-            const response = await fetch(`${apiUrl}/get-place/${id}/`, {
+            const response = await fetch(`${apiUrl}/get-place/${slug}/`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${cookies.get('access')}`,
@@ -116,7 +116,7 @@ const EditLocal: React.FC = () => {
             toast.error('Erro ao carregar os dados do local. Tente novamente mais tarde.')
         }
         setLoader(false)
-    }, [id, cookies])
+    }, [slug, cookies])
 
     const fetchCategoriesData = useCallback(async () => {
         try {
@@ -258,7 +258,7 @@ const EditLocal: React.FC = () => {
                 formData.append('photos', photo)
             })
 
-            const response = await fetch(`${apiUrl}/update-place/${id}/`, {
+            const response = await fetch(`${apiUrl}/update-place/${slug}/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${cookies.get('access')}`,
@@ -466,9 +466,9 @@ const EditLocal: React.FC = () => {
                 </div>
                 <div className="w-5/12 bg-white  pt-0 shadow-lg rounded-lg flex flex-col justify-between">
                     <h2 className="text-2xl font-bold mb-4">Pré visualização</h2>
-                    <div className="border border-gray-300 p-1 rounded-lg flex flex-col justify-between h-full">
-                        <h3 className="text-xl font-bold mt-2 text-center">{formValues.placeName || 'Nome do estabelecimento'}</h3>
-                        <div className="mx-auto w-3/4">
+                    <div className="border border-gray-300 p-1 rounded-lg flex flex-col h-full">
+                        <h3 className="text-xl font-bold my-4 text-center">{formValues.placeName || 'Nome do estabelecimento'}</h3>
+                        <div className="mx-auto my-4 w-3/4">
                             <Carousel
                                 additionalTransfrom={0}
                                 arrows
@@ -527,13 +527,13 @@ const EditLocal: React.FC = () => {
                                 )}
                             </Carousel>
                         </div>
-                        <div className="mx-auto w-3/4 ">
-                            <p className="text-gray-800 mt-2">{formValues.city && formValues.state ? `${formValues.city}, ${formValues.state}` : 'Localização'}</p>
-                            <p className="text-gray-800 mb-4">{formValues.about || 'Conte a história de seu estabelecimento'}</p>
-                            <p className="text-gray-800 mb-4 mt-4">{formValues.description || 'Uma breve descrição do estabelecimento'}</p>
-                            <p className="text-green-button mb-4">{formValues.workStart && formValues.workStop ? `Horário de funcionamento: ${formValues.workStart} - ${formValues.workStop}` : 'Horário de funcionamento'}</p>
-                            <p className="">{formValues.lowerPrice && formValues.higherPrice ? `Valor dos produtos: R$ ${formValues.lowerPrice} A R$ ${formValues.higherPrice} Reais` : `Valor dos produtos`}</p>
-                            <p className="text-gray-800 mb-4">{(formValues.categories || []).join(', ') || 'Categorias'}</p>
+                        <div className="mx-auto w-3/4 my-3 ">
+                            <p className="text-gray-800 mt-4">{formValues.city && formValues.state ? `${formValues.city}, ${formValues.state}` : 'Localização'}</p>
+                            <p className="text-gray-800 my-4">{formValues.about || 'Conte a história de seu estabelecimento'}</p>
+                            <p className="text-gray-800 my-4">{formValues.description || 'Uma breve descrição do estabelecimento'}</p>
+                            <p className="text-green-button my-4">{formValues.workStart && formValues.workStop ? `Horário de funcionamento: ${formValues.workStart} - ${formValues.workStop}` : 'Horário de funcionamento'}</p>
+                            <p className="my-4">{formValues.lowerPrice && formValues.higherPrice ? `Valor dos produtos: R$ ${formValues.lowerPrice} A R$ ${formValues.higherPrice} Reais` : `Valor dos produtos`}</p>
+                            <p className="text-gray-800 my-4">{(formValues.categories || []).join(', ') || 'Categorias'}</p>
                         </div>
                     </div>
                 </div>
