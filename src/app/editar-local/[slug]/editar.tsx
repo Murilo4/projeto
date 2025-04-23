@@ -165,7 +165,7 @@ const EditLocal: React.FC = () => {
         const { name, value, type } = event.target
 
         if (type === 'checkbox') {
-            const target = event.target as HTMLInputElement // Narrowing to HTMLInputElement
+            const target = event.target as HTMLInputElement
             const checked = target.checked
 
             if (name === 'categories') {
@@ -176,11 +176,10 @@ const EditLocal: React.FC = () => {
                         : prevValues.categories.filter((cat) => cat !== value),
                 }))
             } else if (name === 'tipos') {
+                // Allow only one type to be selected
                 setFormValues((prevValues) => ({
                     ...prevValues,
-                    type: checked
-                        ? [...prevValues.type, value]
-                        : prevValues.type.filter((type) => type !== value),
+                    type: checked ? [value] : [],
                 }))
             }
         } else {
@@ -244,18 +243,35 @@ const EditLocal: React.FC = () => {
             formData.append('description', formValues.description)
             formData.append('city', formValues.city)
             formData.append('state', formValues.state)
-            formData.append('type', JSON.stringify(formValues.type))
+
+            // Send only the newly selected type or the existing type
+            const selectedType = formValues.type.length > 0 ? formValues.type[0] : originalValues.type[0]
+            formData.append('type', selectedType)
+
             formData.append('workStart', formValues.workStart)
             formData.append('workStop', formValues.workStop)
             formData.append('about', formValues.about)
             formData.append('lowerPrice', formValues.lowerPrice)
             formData.append('higherPrice', formValues.higherPrice)
-            formData.append('categories', JSON.stringify(categoryObjects))
-            formData.append('lowerPrice', formValues.lowerPrice)
-            formData.append('higherPrice', formValues.higherPrice)
 
-            photos.forEach((photo) => {
-                formData.append('photos', photo)
+            // Send only marked categories
+            const markedCategories = formValues.categories.filter((category) =>
+                categoriesData.some((cat) => cat.category === category)
+            )
+            const selectedCategoryObjects = markedCategories.map((category) => {
+                const categoryData = categoriesData.find((cat) => cat.category === category)
+                return categoryData ? { id: categoryData.id, category: categoryData.category } : null
+            }).filter(Boolean)
+            formData.append('categories', JSON.stringify(selectedCategoryObjects))
+
+            // Combine new photos and existing photo URLs
+            const allPhotos = [...photos, ...formValues.photo]
+            allPhotos.forEach((photo) => {
+                if (photo instanceof File) {
+                    formData.append('photos', photo) // Append new photos
+                } else {
+                    formData.append('photos', photo) // Append existing photo URLs
+                }
             })
 
             const response = await fetch(`${apiUrl}/update-place/${slug}/`, {

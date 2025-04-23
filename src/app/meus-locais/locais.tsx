@@ -6,6 +6,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Cookies from 'universal-cookie'
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'
+import { CircularProgress } from '@mui/material'; // Importa o loader circular do Material-UI
 
 interface Place {
   id: number
@@ -148,22 +149,26 @@ const Locais: React.FC = () => {
         <div className="container mx-auto relative">
           <h1 className="text-2xl font-bold text-center mb-1">Gerenciamento de locais</h1>
           {loader ? (
-              <p></p>
-            ) : (placesCount == userPlan || placesCount > userPlan ? (
-                <p className="text-center text-red-500 mb-4">Você atingiu o limite de locais permitidos no seu plano.</p>
-              ) : (
-                <div className="text-center">
-                    <button
-                      onClick={handleCreatePlace}
-                      className="bg-principal-blue text-white py-2 px-4 mb-4 rounded-md hover:bg-blue-600"
-                    >
-                      Criar Novo local
-                    </button>
-                </div>
-              ))}
+            <div className="flex items-center justify-center h-16">
+              <CircularProgress /> {/* Loader circular para o botão de criação */}
+            </div>
+          ) : (placesCount == userPlan || placesCount > userPlan ? (
+            <p className="text-center text-red-500 mb-4">Você atingiu o limite de locais permitidos no seu plano.</p>
+          ) : (
+            <div className="text-center">
+              <button
+                onClick={handleCreatePlace}
+                className="bg-principal-blue text-white py-2 px-4 mb-4 rounded-md hover:bg-blue-600"
+              >
+                Criar Novo local
+              </button>
+            </div>
+          ))}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {loader ? (
-              <p>Carregando locais...</p>
+              <div className="flex items-center justify-center h-64">
+                <CircularProgress /> {/* Loader circular para a lista de locais */}
+              </div>
             ) : places.length === 0 ? (
               <p className="text-center">Nenhum local encontrado.</p>
             ) : (

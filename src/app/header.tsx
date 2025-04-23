@@ -38,18 +38,18 @@ const Header: React.FC<HeaderProps> = () => {
   }
   const fetchUserData = async () => {
     const cookies = new Cookies();
-      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/get-user-type/`, {
-        method: 'GET',
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${cookies.get('access')}`
-            },
-          });
-      const data = await response.json();
-      if (data.success) {
-        return data.userData;
-      }
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const response = await fetch(`${apiUrl}/get-user-type/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${cookies.get('access')}`
+      },
+    });
+    const data = await response.json();
+    if (data.success) {
+      return data.userData;
+    }
   };
 
   const openModal = (modal: 'novidades' | "registro" | "minha-conta") => {
@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = () => {
       <div className="mx-auto max-w-7xl px-4 pt-1 flex items-center justify-between bg-background">
         <Link href="/" passHref className="bg-background">
           <img src="/novo_Logo.jpg" width={95} height={30} alt="logo"
-          className="bg-background object-cover max-h-32 pb-1 max-w-48" />
+            className="bg-background object-cover max-h-32 pb-1 max-w-48" />
         </Link>
         <nav className="hidden lg:flex items-center flex-grow justify-center space-x-8">
           <div className="relative">
@@ -278,9 +278,9 @@ const Header: React.FC<HeaderProps> = () => {
               <li>
                 <button
                   onClick={() => {
-                    const cookies = new Cookies();
-                    cookies.remove('access');
-                    cookies.remove('refresh');
+                    const cookies = new Cookies(); // Ensure a new instance is created here
+                    cookies.remove('access', { path: '/' }); // Specify path to ensure proper removal
+                    cookies.remove('refresh', { path: '/' }); // Specify path to ensure proper removal
                     setIsLoggedIn(false);
                     closeModal();
                   }}
@@ -340,23 +340,23 @@ const Header: React.FC<HeaderProps> = () => {
                   )}
                 </li>
                 {userType === "cpf" && (
-                <li>
-                  <button
-                    className="text-slate-800 hover:underline w-full mb-2 text-left"
-                  >
-                    <a href="/meus-ganhos" target="_blank"></a>
-                    Meus Ganhos
-                  </button>
-                </li>
-                ) } {userType === "cnpj" && (
-                <li>
-                  <button
-                    className="text-slate-800 hover:underline w-full mb-2 text-left"
-                  >
-                    <a href="/meus-locais" target="_blank"></a>
-                    Meus Locais
-                  </button>
-                </li> 
+                  <li>
+                    <button
+                      className="text-slate-800 hover:underline w-full mb-2 text-left"
+                    >
+                      <a href="/meus-ganhos" target="_blank"></a>
+                      Meus Ganhos
+                    </button>
+                  </li>
+                )} {userType === "cnpj" && (
+                  <li>
+                    <button
+                      className="text-slate-800 hover:underline w-full mb-2 text-left"
+                    >
+                      <a href="/meus-locais" target="_blank"></a>
+                      Meus Locais
+                    </button>
+                  </li>
                 )}
                 <li>
                   <button

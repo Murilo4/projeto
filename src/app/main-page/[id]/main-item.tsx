@@ -12,6 +12,7 @@ import "swiper/css/autoplay";
 import { toast, ToastContainer } from 'react-toastify'
 import { useRouter, useParams } from 'next/navigation'
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
+import { CircularProgress } from '@mui/material'; // Biblioteca de spinner do Material-UI
 
 const data = {
   nome: "Restaurante Cio da Terra Grill",
@@ -43,6 +44,7 @@ interface Place {
   description: string
   enterprise: number
   rating: number | null
+  mediumRate: number | null
   type: string
   workStart: string
   workStop: string
@@ -74,24 +76,195 @@ interface PlaceAddress {
 
 
 const Main = () => {
+  // State hooks
   const [comments, setComments] = useState<PlaceComment[]>(data.comments || []);
   const [newComment, setNewComment] = useState<string>("");
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const cookies = useMemo(() => new Cookies(), [])
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
-  const { id } = useParams()
-  const [loader, setLoader] = useState<boolean>(false)
-  const router = useRouter()
-  const [placeBase, setPlaceBase] = useState<Place | null>(null)
-  const [placeList, setPlaceList] = useState<PlaceList | null>(null)
-  const [placeAddress, setPlaceAddress] = useState<PlaceAddress | null>(null)
+  const [loader, setLoader] = useState<boolean>(false);
+  const [placeBase, setPlaceBase] = useState<Place | null>(null);
+  const [placeList, setPlaceList] = useState<PlaceList | null>(null);
+  const [placeAddress, setPlaceAddress] = useState<PlaceAddress | null>(null);
   const [rating, setRating] = useState<number>(0);
   const [haveRating, setHaveRating] = useState<boolean>(false);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingCommentText, setEditingCommentText] = useState<string>("");
 
-  
+  // Memoized hooks
+  const cookies = useMemo(() => new Cookies(), []);
+
+  // Router hooks
+  const { id } = useParams();
+  const router = useRouter();
+
+  // Callback hooks
+  const handleFavorite = useCallback(async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    try {
+      const response = await fetch(`${apiUrl}/get-favorite/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        if (data.favorite === true) {
+          setIsFavorited(true);
+        }
+      } else if (response.status === 401) {
+        toast.error('Faça login para adicionar aos favoritos.');
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao adicionar local aos favoritos. Tente novamente mais tarde.');
+    }
+  }, [cookies, id]);
+
+  const handleRating = useCallback(async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    try {
+      const response = await fetch(`${apiUrl}/get-rating/${id}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        console.log(data.rating.rating)
+        setHaveRating(true)
+        setRating(data.rating.rating)
+      }
+    }
+    catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao adicionar local aos favoritos. Tente novamente mais tarde.');
+    }
+  }, [cookies, id]);
+
+  const fetchPlaces = useCallback(async () => {
+    setLoader(true)
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/get-place-base/${id}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cookies.get('access')}`,
+        },
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
+        setPlaceBase(data.place)
+        setRating(data.place.rating_number || 0); // Define a avaliação inicial
+      } else {
+        toast.error('Erro ao carregar locais')
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error)
+      toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
+    }
+    setLoader(false)
+  }, [cookies, id]);
+
+  const fetchPlaceLists = useCallback(async () => {
+    setLoader(true)
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/get-place-lists/${id}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cookies.get('access')}`,
+        },
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
+        setPlaceList(data.place)
+        setComments(data.place.comments)
+      } else {
+        toast.error('Erro ao carregar locais')
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error)
+      toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
+    }
+    setLoader(false)
+  }, [cookies, id]);
+
+  const fetchPlaceAddress = useCallback(async () => {
+    setLoader(true)
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/get-place-address/${id}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cookies.get('access')}`,
+        },
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
+        setPlaceAddress(data.place)
+      } else {
+        toast.error('Erro ao carregar locais')
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error)
+      toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
+    }
+    setLoader(false)
+  }, [cookies, id]);
+
+  const handleAddComment = useCallback(async (newComment: string) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    const token = cookies.get('access');
+    if (!token) {
+      toast.error('Você precisa estar logado para adicionar um comentário.');
+      return;
+    }
+    try {
+      const requestData = { comment: newComment };
+      const response = await fetch(`${apiUrl}/send-comment/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        toast.success('Comentário adicionado com sucesso!');
+        setNewComment(""); // Clear the text box
+        fetchPlaceLists(); // Refresh comments
+      } else {
+        toast.error('Erro ao adicionar o comentário.');
+      }
+    } catch (error) {
+      console.error('Erro na requisição:', error);
+      toast.error('Erro ao adicionar o comentário. Tente novamente mais tarde.');
+    }
+  }, [cookies, id, fetchPlaceLists]);
+
+  // Effect hooks
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchPlaces();
+      await handleFavorite();
+      await fetchPlaceLists();
+      await fetchPlaceAddress();
+      handleRating();
+      setIsLoading(false);
+    };
+
+    fetchData();
+  }, [fetchPlaces, handleFavorite, fetchPlaceLists, fetchPlaceAddress, handleRating]);
 
   const handleEditComment = (commentText: string) => {
     setNewComment(commentText); // Set the comment text in the input box for editing
@@ -153,55 +326,6 @@ const Main = () => {
     setEditingCommentText("");
   };
 
-  const handleFavorite = useCallback(async () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-    const token = cookies.get('access');
-    try {
-      const response = await fetch(`${apiUrl}/get-favorite/${id}/`, {
-        method: 'POST',
-        headers: {
-
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-      if (response.ok && data.success) {
-        if (data.favorite == true) {
-          setIsFavorited(true)
-        }
-      }
-    }
-    catch (error) {
-      console.error('Erro na requisição:', error);
-      toast.error('Erro ao adicionar local aos favoritos. Tente novamente mais tarde.');
-    }
-  }, [cookies, id])
-
-  const handleRating = useCallback(async () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-    const token = cookies.get('access');
-    try {
-      const response = await fetch(`${apiUrl}/get-rating/${id}/`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-      if (response.ok && data.success) {
-        console.log(data.rating.rating)
-        setHaveRating(true)
-        setRating(data.rating.rating)
-      }
-    }
-    catch (error) {
-      console.error('Erro na requisição:', error);
-      toast.error('Erro ao adicionar local aos favoritos. Tente novamente mais tarde.');
-    }
-  }, [cookies, id])
-
   const handleOpenFullscreen = (index: number) => {
     setCurrentImageIndex(index);
     setIsFullscreen(true);
@@ -223,9 +347,15 @@ const Main = () => {
   };
 
   const handleToggleFavorite = async () => {
+    const token = cookies.get('access');
+    if (!token) {
+      toast.error('Faça login para adicionar aos favoritos.');
+      router.push('/login'); // Redirect to login page
+      return;
+    }
+
     setIsFavorited(!isFavorited);
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-    const token = cookies.get('access');
     try {
       const response = await fetch(`${apiUrl}/set-favorite/${id}/`, {
         method: 'POST',
@@ -278,101 +408,21 @@ const Main = () => {
     }
   };
 
-  const fetchPlaces = useCallback(async () => {
-    setLoader(true)
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-      const response = await fetch(`${apiUrl}/get-place-base/${id}/`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${cookies.get('access')}`,
-        },
-      })
-      const data = await response.json()
-      if (response.ok && data.success) {
-        setPlaceBase(data.place)
-        setRating(data.place.rating_number || 0); // Define a avaliação inicial
-      } else {
-        toast.error('Erro ao carregar locais')
-      }
-    } catch (error) {
-      console.error('Erro na requisição:', error)
-      toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
-    }
-    setLoader(false)
-  }, [cookies, id])
-
-  const fetchPlaceLists = useCallback(async () => {
-    setLoader(true)
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-      const response = await fetch(`${apiUrl}/get-place-lists/${id}/`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${cookies.get('access')}`,
-        },
-      })
-      const data = await response.json()
-      if (response.ok && data.success) {
-        setPlaceList(data.place)
-        setComments(data.place.comments)
-      } else {
-        toast.error('Erro ao carregar locais')
-      }
-    } catch (error) {
-      console.error('Erro na requisição:', error)
-      toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
-    }
-    setLoader(false)
-  }, [cookies, id])
-
-  const fetchPlaceAddress = useCallback(async () => {
-    setLoader(true)
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-      const response = await fetch(`${apiUrl}/get-place-address/${id}/`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${cookies.get('access')}`,
-        },
-      })
-      const data = await response.json()
-      if (response.ok && data.success) {
-        setPlaceAddress(data.place)
-      } else {
-        toast.error('Erro ao carregar locais')
-      }
-    } catch (error) {
-      console.error('Erro na requisição:', error)
-      toast.error('Erro ao carregar locais. Tente novamente mais tarde.')
-    }
-    setLoader(false)
-  }, [cookies, id])
-
-  const renderStars = () => {
+  const renderStars = (rate: number) => {
     const totalStars = 5;
-    const filledStars = rating; // Use the rating directly
-    const emptyStars = totalStars - filledStars;
+    const filledStars = Math.floor(rate);
+    const halfStar = rate % 1 !== 0;
+    const emptyStars = totalStars - filledStars - (halfStar ? 1 : 0);
 
     const stars = [];
     for (let i = 0; i < filledStars; i++) {
-      stars.push(
-        <FaStar
-          key={`full-${i}`}
-          className="text-yellow cursor-pointer hover:text-yellow"
-          onClick={() => handleRatingChange(i + 1)}
-        />
-      );
+      stars.push(<FaStar key={`full-${i}`} className="text-yellow" />);
     }
-
+    if (halfStar) {
+      stars.push(<FaStarHalfAlt key="half" className="text-yellow" />);
+    }
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <FaRegStar
-          key={`empty-${i}`}
-          className="text-yellow-border cursor-pointer hover:text-yellow"
-          onClick={() => handleRatingChange(filledStars + 1 + i)}
-        />
-      );
+      stars.push(<FaRegStar key={`empty-${i}`} className="text-yellow-border" />);
     }
 
     return stars;
@@ -385,42 +435,19 @@ const Main = () => {
       await fetchPlaceLists();
       await fetchPlaceAddress();
       handleRating(); // Fetch rating independently without awaiting
+      setIsLoading(false); // Finaliza o loading após carregar todos os dados
     };
 
     fetchData();
   }, [fetchPlaces, handleFavorite, fetchPlaceLists, fetchPlaceAddress, handleRating]);
 
-  const handleAddComment = useCallback(async (newComment: string) => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-    const token = cookies.get('access');
-    if (!token) {
-      toast.error('Você precisa estar logado para adicionar um comentário.');
-      return;
-    }
-    try {
-      const requestData = { comment: newComment };
-      const response = await fetch(`${apiUrl}/send-comment/${id}/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      const data = await response.json();
-      if (response.ok && data.success) {
-        toast.success('Comentário adicionado com sucesso!');
-        setNewComment(""); // Clear the text box
-        fetchPlaceLists(); // Refresh comments
-      } else {
-        toast.error('Erro ao adicionar o comentário.');
-      }
-    } catch (error) {
-      console.error('Erro na requisição:', error);
-      toast.error('Erro ao adicionar o comentário. Tente novamente mais tarde.');
-    }
-  }, [cookies, id, fetchPlaceLists]);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <CircularProgress size={50} color="primary" />
+      </div>
+    );
+  }
 
   if (loader && !placeBase) {
     return <div>Carregando...</div>; // Show loading only if placeBase is not loaded
@@ -440,13 +467,17 @@ const Main = () => {
             onClick={handleToggleFavorite}
             className={`text-lg ${isFavorited ? 'text-yellow' : 'text-gray-400'} hover:text-yellow transition duration-300`}
           >
-            {isFavorited ? "Remover dos favoritos ★" : "Adicionar aos favoritos ★"}
+            {cookies.get('access')
+              ? (isFavorited ? "Remover dos favoritos ★" : "Adicionar aos favoritos ★")
+              : "Faça login para adicionar aos favoritos"}
           </button>
         </div>
         <div className="mt-2 text-xl mb-4">
           <div className="flex space-x-1">
-            {haveRating ? renderStars() : <p></p>} {/* Render stars or show loading */}
-            <span className="ml-2 text-xl ">
+            {cookies.get('access')
+              ? (haveRating ? renderStars(rating) : <p></p>)
+              : renderStars(placeBase?.mediumRate || 0)} {/* Use mediumRate if not logged in */}
+            <span className="ml-2 text-xl">
               {placeBase?.rating
                 ? `${placeBase?.rating} ${placeBase?.rating === 1 ? 'Avaliação' : 'Avaliações'}`
                 : "Ainda não avaliado"}
@@ -507,8 +538,8 @@ const Main = () => {
         <div className="mt-4 bg-gray-100 p-4 rounded-lg shadow-md hover:bg-gray-300 transition duration-300 focus:bg-gray-3">
           <div className="hover:scale-105 transition-transform duration-300">
             <p className="text-2xl text-black font-serif">Endereço</p>
-              <p className="mt-2 text-xl text-black">&#x1F4CD; {placeAddress?.street}, {placeAddress?.number}, {placeAddress?.neighborhood}.</p>
-              <p className="mt-2 mb-4 text-xl text-black">{placeAddress?.city}, {placeAddress?.state}. {placeAddress?.cep}</p>
+            <p className="mt-2 text-xl text-black">&#x1F4CD; {placeAddress?.street}, {placeAddress?.number}, {placeAddress?.neighborhood}.</p>
+            <p className="mt-2 mb-4 text-xl text-black">{placeAddress?.city}, {placeAddress?.state}. {placeAddress?.cep}</p>
           </div>
           <div className="hover:scale-105 transition-transform duration-300">
             <p className="text-2xl text-black font-serif">Sobre o local</p>
@@ -516,8 +547,8 @@ const Main = () => {
           </div>
           <hr className="my-4" />
           <div className="hover:scale-105 transition-transform duration-300">
-              <p className="text-2xl text-black font-serif">Descrição</p>
-              <p className="text-lg">{placeBase?.description}</p>
+            <p className="text-2xl text-black font-serif">Descrição</p>
+            <p className="text-lg">{placeBase?.description}</p>
           </div>
           <hr className="my-4" />
           <div className="hover:scale-105 transition-transform duration-300">
@@ -527,8 +558,8 @@ const Main = () => {
           </div>
           <hr className="my-4" />
           <div className="hover:scale-105 transition-transform duration-300">
-              <p className="text-2xl text-black font-serif">O que você pode encontrar no local:</p>
-              {placeList?.categories.join(", ")}.
+            <p className="text-2xl text-black font-serif">O que você pode encontrar no local:</p>
+            {placeList?.categories.join(", ")}.
           </div>
           <hr className="my-4" />
         </div>

@@ -7,6 +7,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import Cookies from 'universal-cookie'
 import Slider from "rc-slider";
 import 'react-toastify/dist/ReactToastify.css'
+import { CircularProgress } from '@mui/material'; // Importa o loader circular do Material-UI
 
 interface Place {
   id: number
@@ -57,11 +58,11 @@ const ResultsPage: React.FC = () => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Estado para tipos selecionados
   const state = "São Paulo"
   const [filterData, setFilterData] = useState({
-      price: {
-        min: minPrice,
-        max: maxPrice,
-      },
-    });
+    price: {
+      min: minPrice,
+      max: maxPrice,
+    },
+  });
   const [filterStars, setFilterStars] = useState({
     stars: {
       min: minStars,
@@ -115,7 +116,7 @@ const ResultsPage: React.FC = () => {
       toast.error('Erro ao carregar tipos. Tente novamente mais tarde.');
     }
   }, []); // Remova cookies do array de dependências
-      
+
   useEffect(() => {
     fetchTypesFilter();
   }, [fetchTypesFilter]);
@@ -168,7 +169,7 @@ const ResultsPage: React.FC = () => {
         },
       });
     }, 300); // Adiciona um atraso de 300ms
-  
+
     return () => clearTimeout(timeout); // Limpa o timeout anterior para evitar conflitos
   }, [minPrice, maxPrice]);
 
@@ -198,137 +199,139 @@ const ResultsPage: React.FC = () => {
       <div className="w-1/4">
         <button
           onClick={toggleFiltros}
-          className="w-full bg-blue-500 text-black py-2 rounded-lg  border-slate-400 mb-6 border-2 shadow-lg shadow-slate-400"
+          className="w-full bg-blue-500 text-black py-2 rounded-lg border-slate-400 mb-6 border-2 shadow-lg shadow-slate-400"
         >
-        {showFilters ? "Esconder filtros" : "Abrir filtros"}
+          {showFilters ? "Esconder filtros" : "Abrir filtros"}
         </button>
         {showFilters ? (
           loader ? (
-            <p>Carregando filtros...</p>
+            <div className="flex items-center justify-center h-32">
+              <CircularProgress /> {/* Loader circular para os filtros */}
+            </div>
           ) : (
             <div className="bg-white p-4 border-2 border-slate-400 last:rounded-lg shadow-lg shadow-slate-400 max-h-656px space-y-6">
-            <div className="h-full">
-              <h3 className="font-bold mb-2">Tipo</h3>
-              {filterTypes.length === 0 ? (
+              <div className="h-full">
+                <h3 className="font-bold mb-2">Tipo</h3>
+                {filterTypes.length === 0 ? (
                   <p className="text-center">Nenhum tipo encontrado.</p>
                 ) : (
                   filterTypes.map((type, index) => (
-                  <div className="space-y-1" key={index}>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="mr-2"
-                        checked={selectedTypes.includes(type.type)} // Marca automaticamente os tipos correspondentes
-                        onChange={(e) => handleTypeChange(type.type, e.target.checked)} // Atualiza os tipos selecionados
-                      />
-                      {type.type}
-                    </label>
-                  </div>
+                    <div className="space-y-1" key={index}>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="mr-2"
+                          checked={selectedTypes.includes(type.type)} // Marca automaticamente os tipos correspondentes
+                          onChange={(e) => handleTypeChange(type.type, e.target.checked)} // Atualiza os tipos selecionados
+                        />
+                        {type.type}
+                      </label>
+                    </div>
                   ))
                 )}
-              <div
-                className={`${hidden.price ? 'max-h-0 opacity-0' : 'max-h-96 py-2 opacity-100'} overflow-hidden px-3 transition-all duration-300 ease-in-out`}
-              >
-                <h3 className="font-bold mb-2">Preço</h3>
-                <Slider
-                  range
-                  min={minPrice}  // Define o valor mínimo do slider
-                  max={maxPrice}  // Define o valor máximo do slider
-                  step={5}                          // Passo do slider
-                  value={[filterData.price.min, filterData.price.max]} // Valores atuais do slider
-                  onChange={handleSliderChange}
-                  styles={{
-                    track: {
-                      backgroundColor: '#2196f3', // Cor da faixa preenchida
-                      height: 8, // Espessura da faixa
-                      borderRadius: 5,
-                    },
-                    rail: {
-                      backgroundColor: '#d3d3d3', // Cor da faixa não preenchida
-                      height: 8, // Espessura da faixa não preenchida
-                      borderRadius: 5,
-                    },
-                    handle: {
-                      backgroundColor: '#2196f3', // Cor do controle
-                      width: 20,
-                      height: 20,
-                      borderRadius: '50%',
-                      boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
-                    },
-                  }}
-                />
-                <div className="flex justify-between text-sm mt-1">
-                  <span>R${filterData.price.min}</span>   {/* Exibe o valor mínimo */}
-                  <span>R${filterData.price.max}</span>   {/* Exibe o valor máximo */}
-                </div>
-              </div>
-
-              <div className='px-3'>
-                
-                <h3 className="font-bold mb-2">Estrelas</h3>
-                <Slider
-                  range
-                  min={minStars}  // Define o valor mínimo do slider
-                  max={maxStars}  // Define o valor máximo do slider
-                  step={1}                          // Passo do slider
-                  value={[filterStars.stars.min, filterStars.stars.max]} // Valores atuais do slider
-                  onChange={handleSliderStarsChange}
-                  styles={{
-                    track: {
-                      backgroundColor: '#2196f3', // Cor da faixa preenchida
-                      height: 8, // Espessura da faixa
-                      borderRadius: 5,
-                    },
-                    rail: {
-                      backgroundColor: '#d3d3d3', // Cor da faixa não preenchida
-                      height: 8, // Espessura da faixa não preenchida
-                      borderRadius: 5,
-                    },
-                    handle: {
-                      backgroundColor: '#2196f3', // Cor do controle
-                      width: 20,
-                      height: 20,
-                      borderRadius: '50%',
-                      boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
-                    },
-                  }}
-                />
-                <div className="flex justify-between text-sm mt-1">
-                  <span className="text-yellow text-sm">
-                    {filterStars.stars.min} {"★".repeat(filterStars.stars.min)}</span>   {/* Exibe o valor mínimo */}
-                  <span className="text-yellow text-sm ml-2">
-                    {filterStars.stars.max} {"★".repeat(filterStars.stars.max)}</span>   {/* Exibe o valor máximo */}
-                </div>
-              </div>
-
-              <div className='px-3'>
-                <h3 className="font-bold mb-2">Horário de funcionamento</h3>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="mr-2"
-                    checked={isOpenNow}
-                    onChange={(e) => setIsOpenNow(e.target.checked)} // Atualiza o estado
-                  />
-                  Aberto agora
-                </label>
-              </div>
-              <div>
-                <button
-                  className="w-full bg-blue-500 text-black py-2 rounded-lg mt-2 border-2 shadow-lg shadow-slate-400 border-slate-400"
-                  onClick={() => {
-                    fetchPlaces(pageNumber, filterData.price.min, filterData.price.max, filterStars.stars.min, filterStars.stars.max, isOpenNow, selectedTypes); // Inclui os tipos selecionados
-                  }}
+                <div
+                  className={`${hidden.price ? 'max-h-0 opacity-0' : 'max-h-96 py-2 opacity-100'} overflow-hidden px-3 transition-all duration-300 ease-in-out`}
                 >
-                  Aplicar filtros
-                </button>
+                  <h3 className="font-bold mb-2">Preço</h3>
+                  <Slider
+                    range
+                    min={minPrice}  // Define o valor mínimo do slider
+                    max={maxPrice}  // Define o valor máximo do slider
+                    step={5}                          // Passo do slider
+                    value={[filterData.price.min, filterData.price.max]} // Valores atuais do slider
+                    onChange={handleSliderChange}
+                    styles={{
+                      track: {
+                        backgroundColor: '#2196f3', // Cor da faixa preenchida
+                        height: 8, // Espessura da faixa
+                        borderRadius: 5,
+                      },
+                      rail: {
+                        backgroundColor: '#d3d3d3', // Cor da faixa não preenchida
+                        height: 8, // Espessura da faixa não preenchida
+                        borderRadius: 5,
+                      },
+                      handle: {
+                        backgroundColor: '#2196f3', // Cor do controle
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+                      },
+                    }}
+                  />
+                  <div className="flex justify-between text-sm mt-1">
+                    <span>R${filterData.price.min}</span>   {/* Exibe o valor mínimo */}
+                    <span>R${filterData.price.max}</span>   {/* Exibe o valor máximo */}
+                  </div>
+                </div>
+
+                <div className='px-3'>
+
+                  <h3 className="font-bold mb-2">Estrelas</h3>
+                  <Slider
+                    range
+                    min={minStars}  // Define o valor mínimo do slider
+                    max={maxStars}  // Define o valor máximo do slider
+                    step={1}                          // Passo do slider
+                    value={[filterStars.stars.min, filterStars.stars.max]} // Valores atuais do slider
+                    onChange={handleSliderStarsChange}
+                    styles={{
+                      track: {
+                        backgroundColor: '#2196f3', // Cor da faixa preenchida
+                        height: 8, // Espessura da faixa
+                        borderRadius: 5,
+                      },
+                      rail: {
+                        backgroundColor: '#d3d3d3', // Cor da faixa não preenchida
+                        height: 8, // Espessura da faixa não preenchida
+                        borderRadius: 5,
+                      },
+                      handle: {
+                        backgroundColor: '#2196f3', // Cor do controle
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+                      },
+                    }}
+                  />
+                  <div className="flex justify-between text-sm mt-1">
+                    <span className="text-yellow text-sm">
+                      {filterStars.stars.min} {"★".repeat(filterStars.stars.min)}</span>   {/* Exibe o valor mínimo */}
+                    <span className="text-yellow text-sm ml-2">
+                      {filterStars.stars.max} {"★".repeat(filterStars.stars.max)}</span>   {/* Exibe o valor máximo */}
+                  </div>
+                </div>
+
+                <div className='px-3'>
+                  <h3 className="font-bold mb-2">Horário de funcionamento</h3>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={isOpenNow}
+                      onChange={(e) => setIsOpenNow(e.target.checked)} // Atualiza o estado
+                    />
+                    Aberto agora
+                  </label>
+                </div>
+                <div>
+                  <button
+                    className="w-full bg-blue-500 text-black py-2 rounded-lg mt-2 border-2 shadow-lg shadow-slate-400 border-slate-400"
+                    onClick={() => {
+                      fetchPlaces(pageNumber, filterData.price.min, filterData.price.max, filterStars.stars.min, filterStars.stars.max, isOpenNow, selectedTypes); // Inclui os tipos selecionados
+                    }}
+                  >
+                    Aplicar filtros
+                  </button>
+                </div>
               </div>
-            </div>
             </div>
           )
         ) : null}
-        </div>
-       
+      </div>
+
       <div
         style={{
           boxShadow: "0px -4px 6px rgba(0, 0, 0, 0.1), 4px 0px 8px rgba(200, 200, 200, 1)",
@@ -352,7 +355,9 @@ const ResultsPage: React.FC = () => {
         {/* Cards de Restaurantes */}
         <div className="space-y-5">
           {loader ? (
-            <p>Carregando locais...</p>
+            <div className="flex items-center justify-center h-64">
+              <CircularProgress /> {/* Loader circular para a lista de locais */}
+            </div>
           ) : places.length === 0 ? (
             <p className="text-center">Nenhum local encontrado.</p>
           ) : (
@@ -369,8 +374,8 @@ const ResultsPage: React.FC = () => {
                 />
                 {/* Informações do Restaurante */}
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold mt-1">{placeData.placeName} 
-                    <span className="ml-4 text-base">{placeData.place.mediumRate} Estrelas</span> 
+                  <h3 className="text-xl font-semibold mt-1">{placeData.placeName}
+                    <span className="ml-4 text-base">{placeData.place.mediumRate} Estrelas</span>
                     <span className="text-yellow text-xl ml-2">
                       {"★".repeat(placeData.place.mediumRate)}{"☆".repeat(5 - placeData.place.mediumRate)}
                     </span>
@@ -395,8 +400,8 @@ const ResultsPage: React.FC = () => {
         <div className="flex justify-center mt-5">
           <button
             onClick={() => {
-                setPage(page - 1);
-                fetchPlaces(page - 1, minPrice, maxPrice, minStars, maxStars, isOpenNow, selectedTypes);
+              setPage(page - 1);
+              fetchPlaces(page - 1, minPrice, maxPrice, minStars, maxStars, isOpenNow, selectedTypes);
             }}
             className={`bg-blue text-white py-2 px-4 rounded-lg ${!hasPreviousPage && 'hidden'}`}
           >
