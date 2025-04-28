@@ -3,8 +3,6 @@ import React, { useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useRouter } from 'next/navigation'
-import { userEmailAtom } from '@/states/atoms/userData'
-import { useSetRecoilState } from 'recoil'
 import Cookies from 'universal-cookie'
 import addressSchema from '@/schemas/registerAddress'
 import { FormRegisterAddressErrors, FormRegisterAddressValues, InputName } from '@/types/newAddress'
@@ -38,7 +36,6 @@ export const CreateNewAddress: React.FC = () => {
 
     const router = useRouter()
     const cookies = new Cookies()
-    const setEmail = useSetRecoilState(userEmailAtom)
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target

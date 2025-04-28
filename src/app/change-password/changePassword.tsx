@@ -8,7 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 const ChangePassword: React.FC = () => {
   const [phone, setPhone] = useState('');
   const router = useRouter();
-  const [loader, setLoader] = useState<boolean>(false)
   const [email, setEmail] = useState('')
 
   const handleRedirect = () => {
@@ -17,7 +16,6 @@ const ChangePassword: React.FC = () => {
 
   const handlePasswordChangeEmail = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setLoader(true)
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
     try {
@@ -34,14 +32,12 @@ const ChangePassword: React.FC = () => {
             toast.error(data.message || 'Erro ao enviar link de redefinição de senha.');
         }
     } catch (error) {
-      setLoader(false)
       console.error('Erro ao enviar link de redefinição', error);
       toast.error('Erro ao realizar login. Tente novamente mais tarde.');
     }
   };
   const handlePasswordChangePhone = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setLoader(true)
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
     try {
@@ -58,12 +54,12 @@ const ChangePassword: React.FC = () => {
             toast.error(data.message || 'Erro ao enviar link de redefinição de senha.');
         }
     } catch (error) {
-      setLoader(false)
       console.error('Erro ao realizar login:', error);
       toast.error('Erro ao realizar login. Tente novamente mais tarde.');
     }
   };
-  return (<>
+  return (
+  <>
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <ToastContainer />
         <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-530px">

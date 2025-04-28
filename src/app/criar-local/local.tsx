@@ -20,21 +20,6 @@ interface LocalType {
   type: string;
 }
 
-interface LocalData {
-  placeName: string;
-  description: string;
-  photo: string;
-  city: string;
-  state: string;
-  type: string[];
-  locationX: string;
-  locationY: string;
-  workStart: string;
-  workStop: string;
-  about: string;
-  category: string[];
-}
-
 const initialValues: FormRegisterPlaceValues = {
   placeName: '',
   description: '',
@@ -98,7 +83,7 @@ const CreateLocal: React.FC = () => {
     } catch (error) {
       console.error('Erro ao buscar dados do usuário:', error)
     }
-  }, [cookies])
+  }, [])
 
   const fetchTypesData = useCallback(async () => {
     try {
@@ -116,7 +101,7 @@ const CreateLocal: React.FC = () => {
     } catch (error) {
       console.error('Erro ao buscar dados do usuário:', error)
     }
-  }, [cookies])
+  }, [])
 
   useEffect(() => {
     fetchCategoriesData()

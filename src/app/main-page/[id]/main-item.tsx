@@ -5,7 +5,6 @@ import Cookies from 'universal-cookie'
 import Slider from '@/components/Slider'; // Componente Slider fornecido
 import { SwiperSlide } from 'swiper/react';
 import { SwiperProps } from "swiper/react";
-import { Router } from "next/router";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
@@ -14,27 +13,6 @@ import { useRouter, useParams } from 'next/navigation'
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { CircularProgress } from '@mui/material'; // Biblioteca de spinner do Material-UI
 
-const data = {
-  nome: "Restaurante Cio da Terra Grill",
-  estrelas: 4.5,
-  qtda_reviews: 6733,
-  address: "R. Mal. Caxias, 2384 - Centro",
-  descrição: "Cozinha informal de opções tradicionais à la carte com petiscos e churrasco de carnes nobres em espaço casual.",
-  avaliações: "Ótimo lugar para se ir com a família.",
-  categorias: ["Bebidas", "Lanches", "Almoço"],
-  horario: "Fecha às 01:00",
-  sobre: 'O Restaurante Cio da Terra Grill, localizado no coração de Franca, é um destino ideal para quem busca uma experiência gastronômica de qualidade. Com um ambiente aconchegante e um atendimento impecável, o local oferece um cardápio diversificado que vai de deliciosos grelhados a pratos tradicionais brasileiros. Reconhecido pelo sabor autêntico e ingredientes frescos, é perfeito tanto para encontros familiares quanto para reuniões com amigos. Sua localização estratégica e o horário estendido tornam o restaurante uma escolha prática e irresistível. Venha conhecer e desfrutar do melhor da culinária local!',
-  imagens: ["/cidades/logo1.png", "/cidades/cio-da-terra2.png"],
-  avaliaçãoDetalhada: {
-    localização: 4.5,
-    quartos: 4.3,
-    custo: 4.2,
-    limpeza: 4.6,
-    atendimento: 4.8,
-    sono: 4.4,
-  },
-  comments: [],
-};
 
 interface Place {
   id: number
@@ -77,7 +55,7 @@ interface PlaceAddress {
 
 const Main = () => {
   // State hooks
-  const [comments, setComments] = useState<PlaceComment[]>(data.comments || []);
+  const [comments, setComments] = useState<PlaceComment[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -266,10 +244,6 @@ const Main = () => {
     fetchData();
   }, [fetchPlaces, handleFavorite, fetchPlaceLists, fetchPlaceAddress, handleRating]);
 
-  const handleEditComment = (commentText: string) => {
-    setNewComment(commentText); // Set the comment text in the input box for editing
-  };
-
   const handleDeleteComment = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
     const token = cookies.get('access');
@@ -380,34 +354,6 @@ const Main = () => {
     }
   };
 
-  const handleRatingChange = async (newRating: number) => {
-    setRating(newRating); // Atualiza o estado da avaliação
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-    const token = cookies.get('access');
-
-    try {
-      const response = await fetch(`${apiUrl}/create-rating/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ placeId: id, rating: newRating }),
-      });
-
-      const data = await response.json();
-      if (response.ok && data.success) {
-        toast.success('Avaliação enviada com sucesso!');
-      } else {
-        toast.error('Erro ao enviar avaliação.');
-      }
-    } catch (error) {
-      console.error('Erro na requisição:', error);
-      toast.error('Erro ao enviar avaliação. Tente novamente mais tarde.');
-    }
-  };
-
   const renderStars = (rate: number) => {
     const totalStars = 5;
     const filledStars = Math.floor(rate);
@@ -489,7 +435,7 @@ const Main = () => {
             <SwiperSlide key={i} className="w-full h-96 object-cover rounded-md relative">
               <img
                 src={`http://localhost:8000${image}`}
-                alt={data.nome}
+                alt={"imagem"}
                 className="w-full h-96 object-fill rounded-lg mx-2 my-2 pr-2"
               />
               <button

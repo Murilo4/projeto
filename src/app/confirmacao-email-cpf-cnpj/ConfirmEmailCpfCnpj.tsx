@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -33,9 +33,8 @@ const isValidCNPJ = (cnpj: string) => {
   cnpj = cnpj.replace(/\D/g, ''); // Remove qualquer caractere não numérico
   if (cnpj.length !== 14) return false; // CNPJ deve ter 14 caracteres
 
-  let size = cnpj.length - 2;
-  let numbers = cnpj.substring(0, size);
-  let digits = cnpj.substring(size);
+  const size = cnpj.length - 2;
+  const digits = cnpj.substring(size);
   let sum = 0;
   let pos = size - 7;
 
@@ -70,10 +69,9 @@ const ConfirmEmailCpfCnpj = () => {
   const [codeSent, setCodeSent] = useState(false)
   const [verificationCode, setVerificationCode] = useState('')
   const [resendTimer, setResendTimer] = useState(0)
-  const [isRequestingCode, setIsRequestingCode] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const cookies = new Cookies()
+  const cookies = useMemo(() => new Cookies(), [])
 
   const identifier = searchParams ? searchParams.get('identifier') : null
 
@@ -95,7 +93,6 @@ const ConfirmEmailCpfCnpj = () => {
         });
   
         if (!response.ok) {
-          const errorData = await response.text();
           toast.error('Erro ao validar o token. Tente novamente mais tarde.');
           router.push('/');
           return;
@@ -162,8 +159,6 @@ const ConfirmEmailCpfCnpj = () => {
   
     // Definir a chave a ser usada no corpo da requisição
     const key = isCPF ? 'cpf' : 'cnpj';
-  
-    setIsRequestingCode(true);
   
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';

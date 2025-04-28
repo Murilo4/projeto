@@ -37,8 +37,6 @@ const UserAccount = () => {
     }
   ]);
   const [originalUserData, setOriginalUserData] = useState(userData)
-  const [isEditingPassword, setIsEditingPassword] = useState(false)
-  const [isEditing, setIsEditing] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [showAddresses, setShowAddresses] = useState(false)
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(false)
@@ -197,7 +195,6 @@ const UserAccount = () => {
       if (data.success) {
         console.log('Dados atualizados com sucesso:', data);
         setOriginalUserData(userData);
-        setIsEditing(false);
         toast.success(data.message || 'Dados atualizados com sucesso.');
       } else {
         console.error('Erro ao atualizar dados:', data);
@@ -212,9 +209,17 @@ const UserAccount = () => {
     try {
       const cookies = new Cookies();
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+      
+      // Check if the file exists
+      const file = fileInputRef.current?.files?.[0];
+      if (!file) {
+        toast.error('Por favor, selecione uma imagem.');
+        return; // Early return if no file is selected
+      }
+  
       const formData = new FormData();
-      formData.append('photo', fileInputRef.current?.files?.[0] as Blob);
-
+      formData.append('photo', file); // Directly append the file since we checked it exists
+  
       const response = await fetch(`${apiUrl}/update-user-photo/`, {
         method: 'PUT',
         headers: {
@@ -222,13 +227,13 @@ const UserAccount = () => {
         },
         body: formData
       });
-
+  
       const data = await response.json();
       if (data.success) {
         toast.success('Foto de perfil atualizada com sucesso.');
-        setImage(URL.createObjectURL(fileInputRef.current?.files?.[0]!)); // Atualiza a imagem com a nova foto
+        setImage(URL.createObjectURL(file)); // Update the image with the new photo
       } else {
-        toast.error(data.message || 'Erro ao atualizar foto.');
+        toast.error('Erro ao atualizar foto.');
       }
     } catch (error) {
       console.error('Erro ao enviar foto:', error);
@@ -357,8 +362,8 @@ const UserAccount = () => {
               <input
                 type="password"
                 placeholder='*************'
-                readOnly={!isEditingPassword}
-                className={`w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 ${!isEditingPassword ? 'bg-gray-100' : ''}`}
+                readOnly={true}
+                className={`w-full border-4 border-blue-thirth rounded-2xl p-3 shadow-md placeholder-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
             </div>
 

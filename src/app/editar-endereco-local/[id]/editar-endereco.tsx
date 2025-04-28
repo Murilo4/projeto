@@ -9,7 +9,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import Cookies from 'universal-cookie'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
-import { LuAlignHorizontalDistributeStart } from 'react-icons/lu'
 
 const initialValues: FormRegisterAddressValues = {
     addressName: '',

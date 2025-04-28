@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -11,9 +11,8 @@ const ConfirmEmail = () => {
   const [codeSent, setCodeSent] = useState(false)
   const [verificationCode, setVerificationCode] = useState('')
   const [resendTimer, setResendTimer] = useState(0)
-  const [isRequestingCode, setIsRequestingCode] = useState(false)
   const router = useRouter()
-  const cookies = new Cookies()
+  const cookies = useMemo(() => new Cookies(), [])
 
   useEffect(() => {
     const token = cookies.get('token')
@@ -90,7 +89,6 @@ const ConfirmEmail = () => {
   }, [router, cookies])
 
   const handleSendCode = async () => {
-    setIsRequestingCode(true)
     const email = localStorage.getItem('userEmail')
 
     try {
@@ -109,8 +107,6 @@ const ConfirmEmail = () => {
         toast.error('Erro ao enviar o código de verificação. Tente novamente mais tarde.')
         return
       }
-
-      const data = await response.json()
 
       toast.success('Código de verificação enviado para seu email.')
       setCodeSent(true)  // Agora a interface muda para inserir o código.
@@ -172,8 +168,6 @@ const ConfirmEmail = () => {
         toast.error('Erro ao reenviar o código de verificação. Tente novamente mais tarde.')
         return
       }
-
-      const data = await response.json()
 
       toast.success('Código de verificação reenviado para seu email.')
       setResendTimer(60)

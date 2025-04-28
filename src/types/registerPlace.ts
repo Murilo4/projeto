@@ -14,7 +14,6 @@ export type FormRegisterPlaceValues = {
     categories: string
     photo: string
     enterprese: string
-    [key: string]: any; 
   }
 
   export type FormRegisterPlaceErrors = {

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -7,7 +7,15 @@ import Cookies from 'universal-cookie';
 // Extend the Window interface to include MercadoPago
 declare global {
   interface Window {
-    MercadoPago: any;
+    MercadoPago: MercadoPago;
+  }
+
+  interface MercadoPago {
+    new (publicKey: string, options?: { locale: string }): MercadoPagoInstance;
+  }
+
+  interface MercadoPagoInstance {
+    checkout: (options: { preference: { id: string }; render: { container: string; label: string } }) => void;
   }
 }
 
@@ -38,11 +46,11 @@ const PaymentPage = () => {
       fetchPlan();
     }
   }, [id]);
-
+  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'; // Using 
   useEffect(() => {
     if (preferenceId) {
       const initializeMercadoPago = () => {
-        const mp = new window.MercadoPago(process.env.NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY, {
+        const mp = new window.MercadoPago(apiUrl, {
           locale: 'pt-BR'
         });
 
@@ -66,13 +74,13 @@ const PaymentPage = () => {
         document.body.appendChild(script);
       }
     }
-  }, [preferenceId]);
+  }, [preferenceId, apiUrl]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!plan) return;
 
-    // Criar objeto de dados de pagamento
+    // Create payment data object
     const paymentData = {
       plan_id: plan.id,
       title: plan.planName,
@@ -92,11 +100,11 @@ const PaymentPage = () => {
 
     const data = await response.json();
 
-    // Verificar se a criação da preferência foi bem-sucedida
+    // Check if preference creation was successful
     if (response.status === 200) {
-      setPreferenceId(data.preference_id); // Armazena o preference_id
+      setPreferenceId(data.preference_id); // Store preference_id
       if (data.payment_link) {
-        // Redirecionar o usuário para o link de pagamento retornado
+        // Redirect user to the payment link returned
         window.location.href = data.payment_link; 
       } else {
         console.error("Erro: payment_link não encontrado na resposta.");

@@ -76,7 +76,7 @@ const CreateAddressLocal: React.FC = () => {
         } catch (error) {
             console.error('Erro ao buscar dados do local:', error)
         }
-    }, [cookies, placeId])
+    }, [placeId])
 
     useEffect(() => {
         fetchPlaceData()
@@ -154,11 +154,36 @@ const CreateAddressLocal: React.FC = () => {
             }
 
             if (data.success) {
-                toast.success(data.message)
-                router.push(`/meus-locais`)
+                toast.success(data.message);
+
+                // Nova requisição para enviar o link de validação
+                try {
+                    const validationResponse = await fetch(`${apiUrl}/send-validation-admin/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${cookies.get('access')}`,
+                        },
+                        body: JSON.stringify({ placeId: placeId })
+                    });
+
+                    const validationData = await validationResponse.json();
+
+                    if (validationData.success) {
+                        toast.success('Link de validação enviado com sucesso!');
+                    } else {
+                        console.error('Erro ao enviar link de validação:', validationData.message);
+                        toast.warning('Não foi possível enviar o link de validação.');
+                    }
+                } catch (error) {
+                    console.error('Erro na requisição para enviar link de validação:', error);
+                    toast.error('Erro ao enviar o link de validação. Tente novamente mais tarde.');
+                }
+
+                router.push(`/meus-locais`);
             } else {
-                console.log('API error:', data.message, data.errors)
-                toast.warning(data.message)
+                console.log('API error:', data.message, data.errors);
+                toast.warning(data.message);
             }
         } catch (error) {
             console.error('API request error:', error)

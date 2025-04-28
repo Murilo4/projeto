@@ -52,7 +52,10 @@ const Search = () => {
   const fetchSlides = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
     try {
-      const response = await fetch(`${apiUrl}/slides`);
+      const response = await fetch(`${apiUrl}/slides/`, {
+          method: 'GET',
+          mode: 'no-cors',
+        });
       const data = await response.json();
       if (data.slides && data.slides.length > 0) {
         setSlides(data.slides);
@@ -111,6 +114,7 @@ const Search = () => {
     }
   };
 
+
   useEffect(() => {
     fetchSlides();
   }, []);
@@ -133,9 +137,7 @@ const Search = () => {
     if (type === 'place') {
       router.push(`/main-page/${encodeURIComponent(suggestion.id)}`);
     } else if (type === 'city') {
-      router.push(`/cities/${encodeURIComponent(suggestion.id)}`);
-    } else if (type === 'state') {
-      router.push(`/states/${encodeURIComponent(suggestion.id)}`);
+      router.push(`/cities/${encodeURIComponent(suggestion.name)}`);
     }
   };
 

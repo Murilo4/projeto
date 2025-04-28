@@ -1,4 +1,3 @@
-import Header from '@/app/header'
 import { Footer } from '@/app/footer'
 import CreateLocal from './local'
 export default function Login() {

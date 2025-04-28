@@ -134,7 +134,7 @@ const EditLocal: React.FC = () => {
         } catch (error) {
             console.error('Erro ao buscar dados do usuário:', error)
         }
-    }, [cookies])
+    }, [])
 
     const fetchTypesData = useCallback(async () => {
         try {
@@ -153,7 +153,7 @@ const EditLocal: React.FC = () => {
         } catch (error) {
             console.error('Erro ao buscar dados do usuário:', error)
         }
-    }, [cookies])
+    }, [])
 
     useEffect(() => {
         fetchPlaceData()
@@ -229,13 +229,6 @@ const EditLocal: React.FC = () => {
 
         try {
             const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-
-            // Prepare categories as an array of objects with id and category
-            const selectedCategories = formValues.categories.filter(Boolean)
-            const categoryObjects = selectedCategories.map((category) => {
-                const categoryData = categoriesData.find((cat) => cat.category === category)
-                return categoryData ? { id: categoryData.id, category: categoryData.category } : null
-            }).filter(Boolean)
 
             // Prepare the payload as FormData
             const formData = new FormData()

@@ -15,5 +15,4 @@ export type searchPlaces = {
     categories: string
     photo: string
     enterprese: string
-    [key: string]: any;
     }

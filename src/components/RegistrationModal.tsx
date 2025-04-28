@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 
 interface RegistrationModalProps {
   isOpen: boolean
@@ -6,13 +5,7 @@ interface RegistrationModalProps {
 }
 
 const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose }) => {
-  const [isCompany, setIsCompany] = useState(false)
-
   if (!isOpen) return null
-
-  const handleAccountTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsCompany(event.target.value === 'company')
-  }
 
   return (
     <div
