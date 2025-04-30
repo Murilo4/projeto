@@ -182,8 +182,8 @@ export const Partners = () => {
     slidesPerView: 5,
     breakpoints: {
       100: { slidesPerView: 1 },
-      768: { slidesPerView: 2 },
-      1024: { slidesPerView: 3 },
+      768: { slidesPerView: 3 },
+      1024: { slidesPerView: 4 },
     },
     autoplay: { delay: 3500, disableOnInteraction: true },
   };
@@ -191,15 +191,44 @@ export const Partners = () => {
   const fetchSlides = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
     try {
-      const response = await fetch(`${apiUrl}/slides`);
-      const data = await response.json();
-      if (data.slides && data.slides.length > 0) {
-        setSlides(data.slides);
-      }
+        const response = await fetch(`${apiUrl}/get-partness/`, {
+            method: 'GET',
+            headers: {
+                "Accept": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.partness && data.partness.length > 0) {
+
+            // Mapeia os dados recebidos para o formato esperado pelo componente
+            const mappedSlides = data.partness.map((partner: any) => ({
+                src: partner.photo || "/partness/default.jpg", // Usa a foto ou uma imagem padrão
+                alt: partner.name,
+                title: partner.name,
+                socials: {
+                    facebook: partner.facebook || null,
+                    instagram: partner.instagram || null,
+                    x: partner.x || null,
+                    linkedin: partner.linkedin || null,
+                },
+            }));
+
+            setSlides(mappedSlides);
+        } else {
+            console.warn('Nenhum parceiro encontrado.');
+            setSlides([]);
+        }
     } catch (error) {
-      console.error("Failed to fetch slides:", error);
+        console.error("Failed to fetch partners:", error);
+        setSlides([]);
     }
-  };
+};
 
   useEffect(() => {
     fetchSlides();
@@ -227,9 +256,9 @@ export const Partners = () => {
           <Slider settings={settings}>
             {slides.map((slide, index) => (
               <SwiperSlide key={index} className="flex justify-center">
-                <div className="flex flex-col items-center h-52 w-56">
+                <div className="flex flex-col items-center h-52 w-64">
                   <img
-                    src={slide.src}
+                    src={`http://localhost:8000/${slide.src}`}
                     alt={slide.alt}
                     className="w-full object-fill rounded-lg shadow-md shadow-slate-700"
                     style={{ height: '95%' }}

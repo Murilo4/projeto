@@ -9,6 +9,7 @@ interface Slide {
   title: string;
   descricao: string;
   horario: string;
+  rating: number;
   link: string;
   estrelas: number;
 }
@@ -42,30 +43,41 @@ export const Sliders2 = () => {
   const fetchSlides = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
     try {
-      const response = await fetch(`${apiUrl}/slides`);
-      const data = await response.json();
-      if (data.slides && data.slides.length > 0) {
-        setSlides(data.slides);
-      } else {
-        setSlides([
-          { src: "/sliders/restaurante3.jpg", alt: "restaurante", title: "Restaurante com ótimo preços", descricao: "Pratos saborosos a preços acessíveis.", horario: "12h - 22h", link: "/restaurante3", estrelas: 4 },
-          { src: "/sliders/restaurante4.jpg", alt: "restaurante", title: "Restaurante com ótimo custo benefício", descricao: "Excelente qualidade por um preço justo.", horario: "12h - 22h", link: "/restaurante4", estrelas: 5 },
-          { src: "/sliders/hotel4.jpg", alt: "hotel", title: "Hotel com ótima localização", descricao: "Próximo aos principais pontos turísticos.", horario: "24h", link: "/hotel4", estrelas: 4 },
-          { src: "/sliders/hotel5.jpg", alt: "hotel", title: "Hotel com ótima avaliação", descricao: "Hospedagem de qualidade e conforto.", horario: "24h", link: "/hotel5", estrelas: 5 },
-          { src: "/sliders/hotel6.jpg", alt: "hotel", title: "Hotel com café da manhã", descricao: "Desfrute de um delicioso café da manhã incluído.", horario: "24h", link: "/hotel6", estrelas: 4 },
-        ]);
-      }
+        const response = await fetch(`${apiUrl}/get-place-base-reviews/`, {
+            method: 'GET',
+            headers: {
+                "Accept": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.places && data.places.length > 0) {
+            // Mapeia os dados recebidos para o formato esperado pelo slider
+            const mappedSlides = data.places.map((place: any) => ({
+                src: place.photos[0] || "/sliders/default.jpg", // Usa a primeira foto ou uma imagem padrão
+                alt: place.placeName,
+                title: place.placeName,
+                descricao: place.description,
+                rating: place.rating,
+                horario: `${place.workStart} - ${place.workStop}`,
+                link: `/main-page/${place.slug}`, // Gera um link baseado no nome do local
+            }));
+
+            setSlides(mappedSlides);
+        } else {
+            console.warn('Nenhum local encontrado.');
+            setSlides([]);
+        }
     } catch (error) {
-      console.error("Failed to fetch slides:", error);
-      setSlides([
-        { src: "/sliders/restaurante3.jpg", alt: "restaurante", title: "Restaurante com ótimo preços", descricao: "Pratos saborosos a preços acessíveis.", horario: "12h - 22h", link: "/restaurante3", estrelas: 4 },
-        { src: "/sliders/restaurante4.jpg", alt: "restaurante", title: "Restaurante com ótimo custo benefício", descricao: "Excelente qualidade por um preço justo.", horario: "12h - 22h", link: "/restaurante4", estrelas: 5 },
-        { src: "/sliders/hotel4.jpg", alt: "hotel", title: "Hotel com ótima localização", descricao: "Próximo aos principais pontos turísticos.", horario: "24h", link: "/hotel4", estrelas: 4 },
-        { src: "/sliders/hotel5.jpg", alt: "hotel", title: "Hotel com ótima avaliação", descricao: "Hospedagem de qualidade e conforto.", horario: "24h", link: "/hotel5", estrelas: 5 },
-        { src: "/sliders/hotel6.jpg", alt: "hotel", title: "Hotel com café da manhã", descricao: "Desfrute de um delicioso café da manhã incluído.", horario: "24h", link: "/hotel6", estrelas: 4 },
-      ]);
+        console.error("Failed to fetch slides:", error);
+        setSlides([]);
     }
-  };
+};
 
   useEffect(() => {
     fetchSlides();
@@ -87,28 +99,24 @@ export const Sliders2 = () => {
         <Slider settings={settings}>
           {slides.map((slide, index) => (
             <SwiperSlide key={index + 5} className="flex justify-center">
-              <div className="border bg-neutral-200 rounded-lg shadow-lg transition transform">
+              <div className="border bg-neutral-300 mb-4 rounded-lg shadow-lg transition transform">
                 <div className="w-full h-64">
-                  <img
-                    src={slide.src}
-                    alt={slide.alt}
-                    className="w-full h-64 object-cover rounded-md shadow-md hover:scale-95"
-                  />
+                <img src={`http://localhost:8000${slide.src}`} alt={slide.alt} className="w-full h-64 object-cover rounded-md shadow-md hover:scale-95" />
                 </div>
                 <div className="p-4">
                   <h3 className="font-semibold text-xl">{slide.title}</h3>
                   <div className="flex items-center mb-2">
                     <span className="text-yellow text-xl">
-                      {"★".repeat(slide.estrelas)}{"☆".repeat(5 - slide.estrelas)} {/* Exemplo de estrelas */}
+                      {"★".repeat(slide.rating)}
                     </span>
-                    <span className="ml-2 text-base">{slide.estrelas} Estrelas</span>
+                    <span className="ml-2 text-base">{slide.rating} Estrelas</span>
                   </div>
                   <p className="text-gray-600">{slide.descricao}</p>
                   <p className="text-base text-green-button">Horário: {slide.horario}</p>
                 </div>
                 <div className="flex justify-between items-center mx-4 my-3">
                   <button
-                    className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                    className="bg-green-button px-4 py-2 rounded hover:bg-gray-400"
                     onClick={() => handleButtonClick(slide.link)}
                   >
                     Visitar Página

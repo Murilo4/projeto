@@ -28,15 +28,12 @@ const initialValues: FormRegisterPlaceValues = {
     city: '',
     state: '',
     type: [],
-    // locationX: '',
-    // locationY: '',
     workStart: '',
     workStop: '',
     lowerPrice: '',
     higherPrice: '',
     about: '',
     categories: [],
-    // enterprese: '',
 }
 
 const initialErrors: FormRegisterPlaceErrors = {
@@ -70,6 +67,7 @@ const EditLocal: React.FC = () => {
     const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
     const [isChanged, setIsChanged] = useState<boolean>(false)
     const [originalValues, setOriginalValues] = useState<FormRegisterPlaceValues>(initialValues)
+    const [removedPhotos, setRemovedPhotos] = useState<string[]>([])
 
     const fetchPlaceData = useCallback(async () => {
         setLoader(true)
@@ -93,7 +91,7 @@ const EditLocal: React.FC = () => {
                     city: data.place.city || '',  // Adicionando valor default
                     state: data.place.state || '',  // Adicionando valor default
                     categories: data.place.categories || [], // Garantindo que seja um array
-                    type: data.place.type || [], // Garantindo que seja um array
+                    type: Array.isArray(data.place.type) ? data.place.type : [data.place.type], // Garante que seja um array
                     // locationX: data.place.locationX || null,  // Valor padrão para locationX
                     // locationY: data.place.locationY || null,  // Valor padrão para locationY
                     photo: data.place.photos || [],  // Garantindo que seja um array de fotos (pode estar vazio)
@@ -202,100 +200,116 @@ const EditLocal: React.FC = () => {
     }
 
     const handleRemovePhoto = (index: number) => {
-        setPhotoPreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index))
-        setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== index))
-        setIsChanged(true)
-    }
+        const isExistingPhoto = typeof photoPreviews[index] === 'string'; // Verifica se é uma URL de foto existente
+        if (isExistingPhoto) {
+            const photoPath = photoPreviews[index].replace('http://localhost:8000', ''); // Remove o domínio
+            setRemovedPhotos((prev) => {
+                const updated = [...prev, photoPath];
+                console.log('Fotos removidas atualizadas:', updated); // Loga o valor atualizado
+                return updated;
+            });
+        }
+        setPhotoPreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
+        setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== index));
+        setIsChanged(true);
+    };
 
     async function handleFormSubmit(place: React.FormEvent<HTMLFormElement>) {
-        place.preventDefault()
-        setLoader(true)
-
-        const validation = editPlace.safeParse(formValues)
-
+        place.preventDefault();
+        setLoader(true);
+    
+        const validation = editPlace.safeParse(formValues);
+    
         if (!validation.success) {
-            console.log('Validation errors:', validation.error.formErrors.fieldErrors)
+            console.log('Validation errors:', validation.error.formErrors.fieldErrors);
             setFormErrors({
                 ...initialErrors,
                 ...validation.error.formErrors.fieldErrors,
-            })
+            });
             Object.values(validation.error.formErrors.fieldErrors).forEach((errorArray) => {
                 errorArray.forEach((error) => {
-                    toast.error(error)
-                })
-            })
-            return
+                    toast.error(error);
+                });
+            });
+            setLoader(false);
+            return;
         }
-
+    
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
-
+            const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    
             // Prepare the payload as FormData
-            const formData = new FormData()
-            formData.append('placeName', formValues.placeName)
-            formData.append('description', formValues.description)
-            formData.append('city', formValues.city)
-            formData.append('state', formValues.state)
-
-            // Send only the newly selected type or the existing type
-            const selectedType = formValues.type.length > 0 ? formValues.type[0] : originalValues.type[0]
-            formData.append('type', selectedType)
-
-            formData.append('workStart', formValues.workStart)
-            formData.append('workStop', formValues.workStop)
-            formData.append('about', formValues.about)
-            formData.append('lowerPrice', formValues.lowerPrice)
-            formData.append('higherPrice', formValues.higherPrice)
-
-            // Send only marked categories
+            const formData = new FormData();
+            formData.append('placeName', formValues.placeName);
+            formData.append('description', formValues.description);
+            formData.append('city', formValues.city);
+            formData.append('state', formValues.state);
+    
+            const selectedType = formValues.type.length > 0 ? formValues.type[0] : originalValues.type[0];
+            formData.append('type', selectedType);
+    
+            formData.append('workStart', formValues.workStart);
+            formData.append('workStop', formValues.workStop);
+            formData.append('about', formValues.about);
+            formData.append('lowerPrice', formValues.lowerPrice);
+            formData.append('higherPrice', formValues.higherPrice);
+    
             const markedCategories = formValues.categories.filter((category) =>
                 categoriesData.some((cat) => cat.category === category)
-            )
+            );
             const selectedCategoryObjects = markedCategories.map((category) => {
-                const categoryData = categoriesData.find((cat) => cat.category === category)
-                return categoryData ? { id: categoryData.id, category: categoryData.category } : null
-            }).filter(Boolean)
-            formData.append('categories', JSON.stringify(selectedCategoryObjects))
-
-            // Combine new photos and existing photo URLs
-            const allPhotos = [...photos, ...formValues.photo]
+                const categoryData = categoriesData.find((cat) => cat.category === category);
+                return categoryData ? { id: categoryData.id, category: categoryData.category } : null;
+            }).filter(Boolean);
+            formData.append('categories', JSON.stringify(selectedCategoryObjects));
+    
+            // Filter existing photos to exclude removed ones
+            const filteredExistingPhotos = formValues.photo.filter(
+                (photo) => !removedPhotos.includes(photo) // Exclude removed photos
+            );
+    
+            // Combine new photos and filtered existing photos
+            const allPhotos = [...photos, ...filteredExistingPhotos];
             allPhotos.forEach((photo) => {
                 if (photo instanceof File) {
-                    formData.append('photos', photo) // Append new photos
+                    formData.append('photos', photo); // Append new photos
                 } else {
-                    formData.append('photos', photo) // Append existing photo URLs
+                    formData.append('photos', photo); // Append existing photo URLs
                 }
-            })
-
+            });
+    
+            // Add removed photos to the payload
+            formData.append('removedPhotos', JSON.stringify(removedPhotos));
+    
             const response = await fetch(`${apiUrl}/update-place/${slug}/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${cookies.get('access')}`,
                 },
                 body: formData,
-            })
-
-            const data = await response.json()
-
+            });
+    
+            const data = await response.json();
+    
             if (response.status === 429) {
-                toast.error('Muitas requisições. Tente novamente mais tarde.')
-                setLoader(false)
-                return
+                toast.error('Muitas requisições. Tente novamente mais tarde.');
+                setLoader(false);
+                return;
             }
-
+    
             if (data.success) {
-                toast.success(data.message)
-                router.push('/meus-locais')
+                toast.success(data.message);
+                router.push('/meus-locais');
             } else {
-                console.log('API error:', data.message, data.errors)
-                toast.warning(data.message)
+                console.log('API error:', data.message, data.errors);
+                toast.warning(data.message);
             }
         } catch (error) {
-            console.error('API request error:', error)
-            toast.error('Erro ao enviar a requisição. Tente novamente mais tarde.')
+            console.error('API request error:', error);
+            toast.error('Erro ao enviar a requisição. Tente novamente mais tarde.');
         }
-
-        setLoader(false)
+    
+        setLoader(false);
     }
 
     const handlebuttonBackClick = () => {
